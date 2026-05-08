@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.bazent.ui.theme.BazentTheme
-import com.example.bazent.ui.screen.LoginScreen
+import com.example.bazent.ui.navigation.NavGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BazentTheme {
-                    LoginScreen()
+                NavGraph()
                 }
 
         }

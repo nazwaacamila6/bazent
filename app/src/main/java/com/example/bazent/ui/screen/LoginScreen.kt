@@ -20,9 +20,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.ui.res.painterResource
+import com.example.bazent.R
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val scrollState = rememberScrollState()
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -48,6 +56,13 @@ fun LoginScreen(navController: NavController) {
         ) {
 
             Spacer(modifier = Modifier.height(70.dp))
+            Image(
+                painter = painterResource(id = R.drawable.logo_bazent),
+                contentDescription = "Logo Bazent",
+                modifier = Modifier
+                    .size(120.dp) // Sesuaikan ukurannya di sini
+                    .padding(bottom = 16.dp)
+            )
 
             // 3. LOGO TEXT: Mengambil warna 'primary' (PrimaryBlue)
             Text(
@@ -82,6 +97,8 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
+                        .verticalScroll(scrollState),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // LABEL TEXT
                     Text(
@@ -157,14 +174,12 @@ fun LoginScreen(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
-
-                    // 8. BUTTON LOGIN DENGAN GRADIENT
                     Button(
                         onClick = { /* Handle Login */ },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(58.dp),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(30.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent
                         ),
@@ -175,20 +190,44 @@ fun LoginScreen(navController: NavController) {
                                 .fillMaxSize()
                                 .background(
                                     brush = gradient,
-                                    shape = RoundedCornerShape(20.dp)
+                                    shape = RoundedCornerShape(30.dp)
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "Login",
-                                color = Color.White, // Tetap putih agar terbaca jelas di background biru
+                                color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // TAMBAHAN: SIGN UP SECTION
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Don't have an account ",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = "Sign Up",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.tertiary, // Warna Kuning Aksen
+                            modifier = Modifier.clickable {
+                                // navController.navigate("register")
+                            })
+                        }
+                    }
                 }
+            Spacer(modifier = Modifier.height(50.dp))
             }
         }
     }
-}
