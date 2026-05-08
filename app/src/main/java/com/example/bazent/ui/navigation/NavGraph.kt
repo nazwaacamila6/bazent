@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bazent.ui.screen.LoginScreen
 import com.example.bazent.ui.screen.RegisterScreen
+import com.example.bazent.ui.screen.HomeScreen
 
 @Composable
 fun NavGraph() {
@@ -25,7 +26,7 @@ fun NavGraph() {
             LoginScreen(navController)
         }
         composable("home") {
-            HomeScreen() // Panggil fungsi dari file HomeScreen.kt kamu
+            HomeScreen(navController)
         }
     }
 }
