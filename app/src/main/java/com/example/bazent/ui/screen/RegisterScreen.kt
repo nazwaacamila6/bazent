@@ -21,14 +21,28 @@ import com.example.bazent.ui.theme.PrimaryBlue
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.TextGray
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import com.example.bazent.R
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 @Composable
 fun RegisterScreen(
     navController: NavController
 ) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -45,7 +59,8 @@ fun RegisterScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
 
             horizontalAlignment = Alignment.CenterHorizontally
@@ -76,8 +91,12 @@ fun RegisterScreen(
 
             // CARD
             Card(
-                shape = RoundedCornerShape(36.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(30.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
 
                 Column(
@@ -120,14 +139,26 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    color = CardWhite,
-                                    shape = RoundedCornerShape(18.dp)
-                                )
+                        OutlinedTextField(
+                            value = username,
+                            onValueChange = {
+                                username = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Masukkan username")
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray
+                            ),
+
+                            singleLine = true
                         )
                     }
 
@@ -146,14 +177,27 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    color = CardWhite,
-                                    shape = RoundedCornerShape(18.dp)
-                                )
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = {
+                                password = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Masukkan password")
+                            },
+                            visualTransformation = PasswordVisualTransformation(),
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray
+                            ),
+
+                            singleLine = true
                         )
                     }
 
@@ -172,14 +216,26 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    color = CardWhite,
-                                    shape = RoundedCornerShape(18.dp)
-                                )
+                        OutlinedTextField(
+                            value = confirmPassword,
+                            onValueChange = {
+                                confirmPassword = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Konfirmasi password")
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray
+                            ),
+
+                            singleLine = true
                         )
                     }
 
@@ -193,8 +249,11 @@ fun RegisterScreen(
                             .background(
                                 color = DarkBlue,
                                 shape = RoundedCornerShape(18.dp)
-                            ),
+                            ).clickable {
 
+                                navController.navigate("home")
+
+                            },
                         contentAlignment = Alignment.Center
                     ) {
 
@@ -219,7 +278,13 @@ fun RegisterScreen(
                         Text(
                             text = "Sign in here",
                             color = Color(0xFFF2C94C),
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+
+                            modifier = Modifier.clickable {
+
+                                navController.navigate("login")
+
+                            }
                         )
                     }
 
