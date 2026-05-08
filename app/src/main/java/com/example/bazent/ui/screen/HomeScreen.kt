@@ -32,7 +32,9 @@ import androidx.compose.ui.unit.sp
 import com.example.bazent.R
 import coil.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
+import com.example.bazent.ui.theme.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 data class Event(
     val title: String,
@@ -42,7 +44,7 @@ data class Event(
 )
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
 
     val events = listOf(
 
@@ -71,70 +73,75 @@ fun HomeScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFEAF7FA))
+            .background(SoftBlue)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            item {
+                Spacer(modifier = Modifier.height(60.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "CIRCLO",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0D4B73)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color.White),
-
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_bazent),
+                            contentDescription = null,
+                            modifier = Modifier.size(42.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        Text(
+                            text = "CIRCLO",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = DarkBlue
+                        )
+                    }
+
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
                         contentDescription = null,
-                        tint = Color(0xFF0D4B73)
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
                 }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text(
+                    text = "Discover Events",
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkBlue
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Find your next circle and connect.",
+                    color = TextGray,
+                    fontSize = 16.sp
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
+            items(events) { event ->
 
-            Text(
-                text = "Discover Events",
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF0D4B73)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Find your next circle and connect.",
-                color = Color.Gray,
-                fontSize = 16.sp
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            LazyColumn(
-                contentPadding = PaddingValues(bottom = 120.dp)
-            ) {
-                items(events) { event ->
-
-                    EventCard(event)
-                }
+                EventCard(event)
             }
         }
 
@@ -148,7 +155,7 @@ fun HomeScreen() {
                 shape = RoundedCornerShape(30.dp),
 
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = CardWhite
                 ),
 
                 modifier = Modifier
@@ -165,7 +172,7 @@ fun HomeScreen() {
                     Icon(
                         imageVector = Icons.Default.Home,
                         contentDescription = null,
-                        tint = Color(0xFF0D4B73),
+                        tint = PrimaryBlue,
                         modifier = Modifier.size(30.dp)
                     )
 
@@ -174,7 +181,7 @@ fun HomeScreen() {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = null,
-                        tint = Color.Gray,
+                        tint = TextGray,
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -187,7 +194,7 @@ fun HomeScreen() {
                     .align(Alignment.TopCenter)
                     .offset(y = (-25).dp),
 
-                containerColor = Color(0xFF0D4B73)
+                containerColor = PrimaryBlue
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -209,7 +216,7 @@ fun EventCard(
             .padding(bottom = 20.dp),
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = CardWhite
         )
     ) {
         Column {
@@ -229,21 +236,21 @@ fun EventCard(
                     text = event.title,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0D4B73)
+                    color = DarkBlue
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = event.date,
-                    color = Color.Gray
+                    color = TextGray
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
                     text = event.location,
-                    color = Color.Gray
+                    color = TextGray
                 )
             }
         }
