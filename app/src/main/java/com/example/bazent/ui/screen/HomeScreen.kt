@@ -35,6 +35,9 @@ import androidx.compose.ui.res.painterResource
 import com.example.bazent.ui.theme.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.foundation.border
 
 data class Event(
     val title: String,
@@ -78,7 +81,8 @@ fun HomeScreen(navController: NavController) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            contentPadding = PaddingValues(bottom = 120.dp)
         ) {
             item {
                 Spacer(modifier = Modifier.height(60.dp))
@@ -100,13 +104,6 @@ fun HomeScreen(navController: NavController) {
                         )
 
                         Spacer(modifier = Modifier.width(10.dp))
-
-                        Text(
-                            text = "CIRCLO",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = DarkBlue
-                        )
                     }
 
                     Image(
@@ -158,9 +155,18 @@ fun HomeScreen(navController: NavController) {
                     containerColor = CardWhite
                 ),
 
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                ),
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(75.dp)
+                    .border(
+                        width = 1.dp,
+                        color = LightBlue,
+                        shape = RoundedCornerShape(30.dp)
+                    )
             ) {
 
                 Row(
@@ -217,6 +223,10 @@ fun EventCard(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = CardWhite
+        ),
+
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
         )
     ) {
         Column {
@@ -232,12 +242,40 @@ fun EventCard(
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {
-                Text(
-                    text = event.title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DarkBlue
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = event.title,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = DarkBlue,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Row {
+                        IconButton(
+                            onClick = { }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null,
+                                tint = PrimaryBlue
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = PrimaryBlue
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
