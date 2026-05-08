@@ -100,7 +100,7 @@ fun HomeScreen(navController: NavController) {
                         Image(
                             painter = painterResource(id = R.drawable.logo_bazent),
                             contentDescription = null,
-                            modifier = Modifier.size(42.dp)
+                            modifier = Modifier.size(48.dp)
                         )
 
                         Spacer(modifier = Modifier.width(10.dp))
@@ -182,7 +182,7 @@ fun HomeScreen(navController: NavController) {
                         modifier = Modifier.size(30.dp)
                     )
 
-                    Spacer(modifier = Modifier.width(70.dp))
+                    Spacer(modifier = Modifier.width(5.dp))
 
                     Icon(
                         imageVector = Icons.Default.Person,

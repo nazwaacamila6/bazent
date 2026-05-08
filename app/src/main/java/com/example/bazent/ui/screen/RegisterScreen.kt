@@ -28,6 +28,7 @@ import com.example.bazent.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,14 +36,25 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 
 @Composable
 fun RegisterScreen(
     navController: NavController
 ) {
     var username by remember { mutableStateOf("") }
+    var fullName by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }
+    var nik by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -66,35 +78,37 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(90.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.logo_bazent),
                 contentDescription = "Logo Bazent",
 
                 modifier = Modifier
-                    .size(140.dp),
+                    .size(160.dp)
+                    .padding(start = 8.dp),
 
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // SUBTITLE
             Text(
                 text = "Temukan event gratis, gabung, dan terhubung bersama.",
                 fontSize = 16.sp,
-                color = TextGray
+                color = TextGray,
+                textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             // CARD
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(30.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = Color.White
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
@@ -121,7 +135,8 @@ fun RegisterScreen(
                     Text(
                         text = "Join a community of authentic explorers.",
                         fontSize = 15.sp,
-                        color = TextGray
+                        color = TextGray,
+                        textAlign = TextAlign.Center
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -148,14 +163,172 @@ fun RegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
 
                             placeholder = {
-                                Text("Masukkan username")
+                                Text("Enter username")
                             },
 
                             shape = RoundedCornerShape(18.dp),
 
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = PrimaryBlue,
-                                unfocusedBorderColor = Color.LightGray
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
+                            ),
+
+                            singleLine = true
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // FULL NAME
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text(
+                            text = "FULL NAME",
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        OutlinedTextField(
+                            value = fullName,
+                            onValueChange = {
+                                fullName = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Enter full name")
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
+                            ),
+
+                            singleLine = true
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // PHONE NUMBER
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text(
+                            text = "PHONE NUMBER",
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        OutlinedTextField(
+                            value = phoneNumber,
+                            onValueChange = {
+                                phoneNumber = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Enter phone number")
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
+                            ),
+
+                            singleLine = true
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // NIK
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text(
+                            text = "NIK",
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        OutlinedTextField(
+                            value = nik,
+                            onValueChange = {
+                                nik = it
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            placeholder = {
+                                Text("Enter NIK")
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
                             ),
 
                             singleLine = true
@@ -186,15 +359,45 @@ fun RegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
 
                             placeholder = {
-                                Text("Masukkan password")
+                                Text("Enter password")
                             },
-                            visualTransformation = PasswordVisualTransformation(),
+
+                            visualTransformation =
+                                if (passwordVisible) VisualTransformation.None
+                                else PasswordVisualTransformation(),
+
+                            trailingIcon = {
+                                IconButton(onClick = {
+                                    passwordVisible = !passwordVisible
+                                }) {
+                                    Icon(
+                                        imageVector =
+                                            if (passwordVisible)
+                                                Icons.Default.Visibility
+                                            else
+                                                Icons.Default.VisibilityOff,
+
+                                        contentDescription = "Toggle Password"
+                                    )
+                                }
+                            },
 
                             shape = RoundedCornerShape(18.dp),
 
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = PrimaryBlue,
-                                unfocusedBorderColor = Color.LightGray
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
                             ),
 
                             singleLine = true
@@ -222,17 +425,48 @@ fun RegisterScreen(
                                 confirmPassword = it
                             },
 
+                            visualTransformation =
+                                if (confirmPasswordVisible) VisualTransformation.None
+                                else PasswordVisualTransformation(),
+
+                            trailingIcon = {
+                                IconButton(onClick = {
+                                    confirmPasswordVisible = !confirmPasswordVisible
+                                }) {
+                                    Icon(
+                                        imageVector =
+                                            if (confirmPasswordVisible)
+                                                Icons.Default.Visibility
+                                            else
+                                                Icons.Default.VisibilityOff,
+
+                                        contentDescription = "Toggle Password"
+                                    )
+                                }
+                            },
+
                             modifier = Modifier.fillMaxWidth(),
 
                             placeholder = {
-                                Text("Konfirmasi password")
+                                Text("Confirm password")
                             },
 
                             shape = RoundedCornerShape(18.dp),
 
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = PrimaryBlue,
-                                unfocusedBorderColor = Color.LightGray
+                                unfocusedBorderColor = Color.LightGray,
+
+                                focusedTextColor = DarkBlue,
+                                unfocusedTextColor = DarkBlue,
+
+                                cursorColor = PrimaryBlue,
+
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+
+                                focusedPlaceholderColor = Color.Gray,
+                                unfocusedPlaceholderColor = Color.Gray
                             ),
 
                             singleLine = true
@@ -268,12 +502,17 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.height(28.dp))
 
                     // SIGN IN
-                    Row {
-
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
                         Text(
                             text = "Already have an account? ",
                             color = TextGray
                         )
+
+                        Spacer(modifier = Modifier.width(4.dp))
 
                         Text(
                             text = "Sign in here",
@@ -298,7 +537,9 @@ fun RegisterScreen(
             Text(
                 text = "By creating an account, you agree to Bazent's Terms of Service and Privacy Policy.",
                 fontSize = 12.sp,
-                color = TextGray
+                color = TextGray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 24.dp)
             )
         }
     }
