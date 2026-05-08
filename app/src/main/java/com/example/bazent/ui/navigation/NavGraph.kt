@@ -14,7 +14,7 @@ fun NavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = "register"
+        startDestination = "Login"
     ) {
 
         composable("register") {
@@ -23,6 +23,9 @@ fun NavGraph() {
 
         composable("login") {
             LoginScreen(navController)
+        }
+        composable("home") {
+            HomeScreen() // Panggil fungsi dari file HomeScreen.kt kamu
         }
     }
 }

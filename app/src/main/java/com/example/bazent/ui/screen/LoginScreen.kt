@@ -1,7 +1,11 @@
 package com.example.bazent.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -14,23 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.ui.res.painterResource
 import com.example.bazent.R
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import com.example.bazent.ui.theme.SoftBlue
+import com.example.bazent.ui.theme.LightBlue
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
     val scrollState = rememberScrollState()
+
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -45,26 +49,34 @@ fun LoginScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // 2. BACKGROUND: Mengambil background default dari Theme
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        SoftBlue,
+                        LightBlue
+                    )
+                )
+            )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .verticalScroll(scrollState), // FIX: Scroll di sini
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Spacer(modifier = Modifier.height(70.dp))
+
+            // LOGO
             Image(
                 painter = painterResource(id = R.drawable.logo_bazent),
                 contentDescription = "Logo Bazent",
                 modifier = Modifier
-                    .size(120.dp) // Sesuaikan ukurannya di sini
+                    .size(120.dp)
                     .padding(bottom = 16.dp)
             )
 
-            // 3. LOGO TEXT: Mengambil warna 'primary' (PrimaryBlue)
             Text(
                 text = "BAZENT",
                 fontSize = 34.sp,
@@ -74,12 +86,11 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 4. SUBTITLE: Mengambil warna 'onSurface' (TextGray)
             Text(
                 text = "Temukan event gratis, gabung, dan terhubung bersama.",
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -88,7 +99,6 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(30.dp),
                 colors = CardDefaults.cardColors(
-                    // 5. CARD BACKGROUND: Mengambil 'surface' (CardWhite)
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -97,10 +107,8 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
-                        .verticalScroll(scrollState),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // LABEL TEXT
+                    // USERNAME
                     Text(
                         text = "Username",
                         color = MaterialTheme.colorScheme.primary,
@@ -109,24 +117,17 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // INPUT FIELD USERNAME
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Masukkan username") },
+                        placeholder = { Text("Enter a username") },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Person,
-                                contentDescription = null,
-                                // 6. ICON COLOR: Ikut warna primary
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Icon(Icons.Default.Person, null, tint = MaterialTheme.colorScheme.primary)
                         },
                         shape = RoundedCornerShape(18.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            // 7. BORDER COLORS: Mengambil primary dan outline (BorderColor)
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
@@ -142,18 +143,13 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // INPUT FIELD PASSWORD
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Masukkan password") },
+                        placeholder = { Text("Enter a password") },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.primary)
                         },
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -175,23 +171,18 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(28.dp))
                     Button(
-                        onClick = { /* Handle Login */ },
+                        onClick = {navController.navigate("Home")},
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(58.dp),
                         shape = RoundedCornerShape(30.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent
-                        ),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         contentPadding = PaddingValues()
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(
-                                    brush = gradient,
-                                    shape = RoundedCornerShape(30.dp)
-                                ),
+                                .background(brush = gradient, shape = RoundedCornerShape(30.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -205,29 +196,25 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // TAMBAHAN: SIGN UP SECTION
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Don't have an account ",
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
+                        Text(text = "Don't have an account ", fontSize = 14.sp, color = Color.Gray)
                         Text(
                             text = "Sign Up",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary, // Warna Kuning Aksen
+                            color = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.clickable {
-                                // navController.navigate("register")
-                            })
-                        }
+                                navController.navigate("register")
+                            }
+                        )
                     }
                 }
-            Spacer(modifier = Modifier.height(50.dp))
             }
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
+}
