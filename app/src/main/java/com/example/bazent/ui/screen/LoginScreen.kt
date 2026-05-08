@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.example.bazent.R
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.LightBlue
+import com.example.bazent.ui.theme.DarkBlue
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -73,15 +74,8 @@ fun LoginScreen(navController: NavController) {
                 painter = painterResource(id = R.drawable.logo_bazent),
                 contentDescription = "Logo Bazent",
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(160.dp)
                     .padding(bottom = 16.dp)
-            )
-
-            Text(
-                text = "BAZENT",
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -93,7 +87,7 @@ fun LoginScreen(navController: NavController) {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -128,8 +122,8 @@ fun LoginScreen(navController: NavController) {
                         shape = RoundedCornerShape(18.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            focusedTextColor = DarkBlue,
+                            unfocusedTextColor = DarkBlue,
                         )
                     )
 
@@ -164,8 +158,8 @@ fun LoginScreen(navController: NavController) {
                         shape = RoundedCornerShape(18.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            focusedTextColor = DarkBlue,
+                            unfocusedTextColor = DarkBlue,
                         )
                     )
 
