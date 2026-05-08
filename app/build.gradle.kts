@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.bazent"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.bazent"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -71,4 +71,6 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.5")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
 }

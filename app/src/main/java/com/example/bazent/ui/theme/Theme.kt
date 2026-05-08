@@ -9,35 +9,38 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = PrimaryBlue,
+    secondary = DarkBlue,
+    tertiary = AccentYellow,
+    background = Color(0xFF121212), // Background gelap standar
+    surface = Color(0xFF1E1E1E),
+    onPrimary = Color.White,
+    onSecondary = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = PrimaryBlue,
+    secondary = DarkBlue,
+    tertiary = AccentYellow,
+    background = Color.White,
+    surface = CardWhite,
+    outline = BorderColor,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onSurface = TextGray
+
+    /* Kamu bisa override warna lain sesuai kebutuhan */
 )
 
 @Composable
 fun BazentTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Saya set false secara default agar warna custom kamu langsung terlihat
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
