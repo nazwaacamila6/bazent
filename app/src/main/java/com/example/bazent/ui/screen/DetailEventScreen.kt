@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material3.*
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,22 +50,20 @@ fun DetailEventScreen(
             item {
 
                 // HEADER
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = CardWhite,
-                    shadowElevation = 8.dp,
-                    shape = RoundedCornerShape(
-                        bottomStart = 28.dp,
-                        bottomEnd = 28.dp
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(SoftBlue)
                 ) {
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = 24.dp,
-                                vertical = 18.dp
+                                start = 24.dp,
+                                end = 24.dp,
+                                top = 50.dp,
+                                bottom = 18.dp
                             ),
 
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -88,6 +87,11 @@ fun DetailEventScreen(
                             contentScale = ContentScale.Crop
                         )
                     }
+
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = TextGray
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -255,68 +259,6 @@ fun DetailEventScreen(
                             )
 
                             Spacer(modifier = Modifier.height(20.dp))
-
-                            var showAllParticipants by remember {
-                                mutableStateOf(false)
-                            }
-
-                            val allParticipants = listOf(
-                                "Nazwa Camila",
-                                "Cina Brelian",
-                                "Lian Anugrah Oktaviani",
-                                "Aulia Surya Nugraheni",
-                                "Surya Saputra",
-                                "Aditya Pratama",
-                                "Dimas Saputro",
-                                "Rizky Ramadhan",
-                                "Putri Maharani",
-                                "Anisa Putri",
-                                "Kevin Wijaya",
-                                "Bagas Prakoso",
-                                "Farel Akbar",
-                                "Mutiara Nabila",
-                                "Raka Mahendra",
-                                "Nadya Permata"
-                            )
-
-                            val displayedParticipants =
-                                if (showAllParticipants) {
-                                    allParticipants
-                                } else {
-                                    allParticipants.take(6)
-                                }
-
-                            displayedParticipants.forEach {
-
-                                Text(
-                                    text = it,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.Black,
-                                    modifier = Modifier.padding(bottom = 12.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text =
-                                    if (showAllParticipants)
-                                        "Show Less"
-                                    else
-                                        "Selanjutnya",
-
-                                color = PrimaryBlue,
-                                fontWeight = FontWeight.Bold,
-
-                                modifier = Modifier
-                                    .align(Alignment.End)
-                                    .clickable {
-
-                                        showAllParticipants =
-                                            !showAllParticipants
-                                    }
-                            )
                         }
                     }
 
