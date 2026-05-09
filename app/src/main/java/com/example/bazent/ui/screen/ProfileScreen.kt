@@ -2,6 +2,7 @@ package com.example.bazent.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,10 +46,6 @@ fun ProfileScreen(
 
     var selectedTab by remember {
         mutableStateOf("shared")
-    }
-
-    var expanded by remember {
-        mutableStateOf(false)
     }
 
     val sharedEvents = listOf(
@@ -98,73 +95,67 @@ fun ProfileScreen(
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .fillMaxSize(),
 
+            contentPadding = PaddingValues(
+                bottom = 140.dp
+            ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             item {
-
-                Spacer(modifier = Modifier.height(20.dp))
-
                 // TOP BAR
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Image(
-                        painter = painterResource(id = R.drawable.logo_bazent),
-                        contentDescription = "Logo",
-
-                        modifier = Modifier.size(48.dp)
+                Card (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 2.dp),
+                    shape = RoundedCornerShape(
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = SoftBlue
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
                     )
 
-                    Box {
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 24.dp,
+                                end = 24.dp,
+                                top = 20.dp,
+                                bottom = 18.dp
+                            ),
+
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
                         Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "Profile",
-
-                            modifier = Modifier
-                                .size(55.dp)
-                                .clip(CircleShape)
-                                .clickable {
-                                    expanded = true
-                                },
-
-                            contentScale = ContentScale.Crop
+                            painter = painterResource(id = R.drawable.logo_bazent),
+                            contentDescription = null,
+                            modifier = Modifier.size(55.dp)
                         )
+                        Box {
 
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = {
-                                expanded = false
+                            Image(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = "Profile",
+
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape),
+
+                                contentScale = ContentScale.Crop
+                                )
                             }
-                        ) {
-
-                            DropdownMenuItem(
-                                text = {
-                                    Text("Logout")
-                                },
-
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Logout,
-                                        contentDescription = "Logout"
-                                    )
-                                },
-
-                                onClick = {
-                                    expanded = false
-                                    navController.navigate("login")
-                                }
-                            )
                         }
                     }
-                }
+
 
                 Spacer(modifier = Modifier.height(30.dp))
 
@@ -188,17 +179,6 @@ fun ProfileScreen(
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                     color = DarkBlue
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // BIO
-                Text(
-                    text = "Exploring the depths of the city, one community event at a time.",
-                    fontSize = 16.sp,
-                    color = TextGray,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 24.sp
                 )
 
                 Spacer(modifier = Modifier.height(36.dp))
@@ -288,6 +268,7 @@ fun ProfileScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                         .padding(bottom = 18.dp),
 
                     shape = RoundedCornerShape(28.dp),
@@ -381,6 +362,45 @@ fun ProfileScreen(
             }
 
             item {
+                Spacer(modifier = Modifier.height(50.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate("login")
+                    },
+
+                    modifier = Modifier
+                        .fillMaxWidth(0.70f)
+                        .height(54.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF6B6B)
+                    ),
+
+                    shape = RoundedCornerShape(18.dp),
+
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp
+                    )
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = "Logout",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = "Logout",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
