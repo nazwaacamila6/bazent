@@ -93,10 +93,21 @@ fun HomeScreen(navController: NavController) {
 
             item {
 
-                Column (
+                Card (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(SoftBlue)
+                        .padding(bottom = 2.dp),
+                    shape = RoundedCornerShape(
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = SoftBlue
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    )
+
                 ) {
 
                     Row(
@@ -127,11 +138,6 @@ fun HomeScreen(navController: NavController) {
                             contentScale = ContentScale.Crop
                         )
                     }
-
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = TextGray
-                    )
                 }
 
                 Column(
@@ -167,99 +173,6 @@ fun HomeScreen(navController: NavController) {
                         navController = navController
                     )
                 }
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ){
-
-            NavigationBar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .navigationBarsPadding()
-                    .height(72.dp)
-                    .clip(RoundedCornerShape(28.dp))
-                    .border(
-                        width = 1.5.dp,
-                        color = DarkBlue,
-                        shape = RoundedCornerShape(28.dp)
-                    ),
-
-                containerColor = CardWhite,
-                tonalElevation = 0.dp
-            ) {
-
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {
-                        navController.navigate("home")
-                    },
-
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    },
-
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = PrimaryBlue,
-                        unselectedIconColor = TextGray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-
-                    icon = {}
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {
-                        navController.navigate("profile")
-                    },
-
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    },
-
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = PrimaryBlue,
-                        unselectedIconColor = TextGray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
-
-            FloatingActionButton(
-                onClick = { },
-
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = (-22).dp)
-                    .size(68.dp),
-
-                containerColor = PrimaryBlue
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(34.dp)
-                )
             }
         }
     }

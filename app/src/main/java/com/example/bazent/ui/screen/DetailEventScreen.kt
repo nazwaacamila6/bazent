@@ -50,10 +50,23 @@ fun DetailEventScreen(
             item {
 
                 // HEADER
-                Column(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(SoftBlue)
+                        .padding(bottom = 0.dp),
+
+                    shape = RoundedCornerShape(
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp
+                    ),
+
+                    colors = CardDefaults.cardColors(
+                        containerColor = SoftBlue
+                    ),
+
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    )
                 ) {
 
                     Row(
@@ -87,11 +100,6 @@ fun DetailEventScreen(
                             contentScale = ContentScale.Crop
                         )
                     }
-
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = TextGray
-                    )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -289,88 +297,5 @@ fun DetailEventScreen(
             }
         }
 
-        // BOTTOM NAVBAR
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ) {
-
-            NavigationBar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(
-                        horizontal = 20.dp,
-                        vertical = 10.dp
-                    )
-                    .navigationBarsPadding()
-                    .height(72.dp)
-                    .clip(RoundedCornerShape(28.dp)),
-
-                containerColor = CardWhite,
-                tonalElevation = 8.dp
-            ) {
-
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {
-                        navController.navigate("home")
-                    },
-
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = null
-                        )
-                    },
-
-                    label = {
-                        Text("HOME")
-                    }
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-
-                    icon = {}
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null
-                        )
-                    },
-
-                    label = {
-                        Text("PROFILE")
-                    }
-                )
-            }
-
-            FloatingActionButton(
-                onClick = { },
-
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = (-22).dp)
-                    .size(68.dp),
-
-                containerColor = DarkBlue
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(34.dp)
-                )
-            }
-        }
     }
 }

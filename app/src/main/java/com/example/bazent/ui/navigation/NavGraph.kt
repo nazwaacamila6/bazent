@@ -57,7 +57,11 @@ fun NavGraph() {
 
                         onClick = {
                             navController.navigate("home") {
+                                popUpTo("home"){
+                                    saveState = true
+                                }
                                 launchSingleTop = true
+                                restoreState = true
                             }
                         },
 
@@ -87,7 +91,11 @@ fun NavGraph() {
 
                         onClick = {
                             navController.navigate("create") {
+                                popUpTo("home") {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
+                                restoreState = true
                             }
                         },
 
@@ -121,7 +129,11 @@ fun NavGraph() {
 
                         onClick = {
                             navController.navigate("profile") {
+                                popUpTo("home") {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
+                                restoreState = true
                             }
                         },
 
