@@ -39,7 +39,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 
@@ -94,18 +93,10 @@ fun HomeScreen(navController: NavController) {
 
             item {
 
-                Surface(
+                Column (
                     modifier = Modifier
-                        .fillMaxWidth(),
-
-                    color = CardWhite,
-
-                    shadowElevation = 8.dp,
-
-                    shape = RoundedCornerShape(
-                        bottomStart = 30.dp,
-                        bottomEnd = 30.dp
-                    )
+                        .fillMaxWidth()
+                        .background(SoftBlue)
                 ) {
 
                     Row(
@@ -136,6 +127,11 @@ fun HomeScreen(navController: NavController) {
                             contentScale = ContentScale.Crop
                         )
                     }
+
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = TextGray
+                    )
                 }
 
                 Column(

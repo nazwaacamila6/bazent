@@ -42,6 +42,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun RegisterScreen(
@@ -264,54 +266,9 @@ fun RegisterScreen(
                                 Text("Enter phone number")
                             },
 
-                            shape = RoundedCornerShape(18.dp),
-
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = PrimaryBlue,
-                                unfocusedBorderColor = Color.LightGray,
-
-                                focusedTextColor = DarkBlue,
-                                unfocusedTextColor = DarkBlue,
-
-                                cursorColor = PrimaryBlue,
-
-                                focusedContainerColor = Color.White,
-                                unfocusedContainerColor = Color.White,
-
-                                focusedPlaceholderColor = Color.Gray,
-                                unfocusedPlaceholderColor = Color.Gray
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
                             ),
-
-                            singleLine = true
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // NIK
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        Text(
-                            text = "NIK",
-                            color = PrimaryBlue,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        OutlinedTextField(
-                            value = nik,
-                            onValueChange = {
-                                nik = it
-                            },
-
-                            modifier = Modifier.fillMaxWidth(),
-
-                            placeholder = {
-                                Text("Enter NIK")
-                            },
 
                             shape = RoundedCornerShape(18.dp),
 
