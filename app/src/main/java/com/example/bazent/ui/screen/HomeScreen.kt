@@ -38,6 +38,10 @@ import androidx.navigation.NavController
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.*
 
 data class Event(
     val title: String,
@@ -78,119 +82,169 @@ fun HomeScreen(navController: NavController) {
             .fillMaxSize()
             .background(SoftBlue)
     ) {
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(bottom = 120.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(60.dp))
+                .fillMaxSize(),
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            contentPadding = PaddingValues(
+                bottom = 140.dp
+            )
+        ) {
+
+            item {
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+
+                    color = CardWhite,
+
+                    shadowElevation = 8.dp,
+
+                    shape = RoundedCornerShape(
+                        bottomStart = 30.dp,
+                        bottomEnd = 30.dp
+                    )
                 ) {
 
                     Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 24.dp,
+                                end = 24.dp,
+                                top = 50.dp,
+                                bottom = 18.dp
+                            ),
+
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
                         Image(
                             painter = painterResource(id = R.drawable.logo_bazent),
                             contentDescription = null,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier.size(55.dp)
                         )
-
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.profile),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(52.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
                     }
-
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                ) {
 
-                Text(
-                    text = "Discover Events",
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DarkBlue
-                )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Discover Events",
+                        fontSize = 34.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = DarkBlue
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Find your next circle and connect.",
+                        color = TextGray,
+                        fontSize = 16.sp
+                    )
 
-                Text(
-                    text = "Find your next circle and connect.",
-                    color = TextGray,
-                    fontSize = 16.sp
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
             }
 
             items(events) { event ->
 
-                EventCard(event)
+                Box(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                ) {
+                    EventCard(
+                        event = event,
+                        navController = navController
+                    )
+                }
             }
         }
 
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(20.dp)
-        ) {
+        ){
 
-            Card(
-                shape = RoundedCornerShape(30.dp),
-
-                colors = CardDefaults.cardColors(
-                    containerColor = CardWhite
-                ),
-
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-
+            NavigationBar(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp)
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .navigationBarsPadding()
+                    .height(72.dp)
+                    .clip(RoundedCornerShape(28.dp))
                     .border(
-                        width = 1.dp,
-                        color = LightBlue,
-                        shape = RoundedCornerShape(30.dp)
-                    )
+                        width = 1.5.dp,
+                        color = DarkBlue,
+                        shape = RoundedCornerShape(28.dp)
+                    ),
+
+                containerColor = CardWhite,
+                tonalElevation = 0.dp
             ) {
 
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                NavigationBarItem(
+                    selected = true,
+                    onClick = {
+                        navController.navigate("home")
+                    },
 
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = null,
-                        tint = PrimaryBlue,
-                        modifier = Modifier.size(30.dp)
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Home,
+                            contentDescription = "Home",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    },
+
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = PrimaryBlue,
+                        unselectedIconColor = TextGray,
+                        indicatorColor = Color.Transparent
                     )
+                )
 
-                    Spacer(modifier = Modifier.width(5.dp))
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { },
 
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = TextGray,
-                        modifier = Modifier.size(30.dp)
+                    icon = {}
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        navController.navigate("profile")
+                    },
+
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    },
+
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = PrimaryBlue,
+                        unselectedIconColor = TextGray,
+                        indicatorColor = Color.Transparent
                     )
-                }
+                )
             }
 
             FloatingActionButton(
@@ -198,14 +252,17 @@ fun HomeScreen(navController: NavController) {
 
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .offset(y = (-25).dp),
+                    .offset(y = (-22).dp)
+                    .size(68.dp),
 
                 containerColor = PrimaryBlue
             ) {
+
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = Color.White,
+                    modifier = Modifier.size(34.dp)
                 )
             }
         }
@@ -214,19 +271,27 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun EventCard(
-    event: Event
+    event: Event,
+    navController: NavController
 ) {
+
+    var isLiked by remember{
+        mutableStateOf(false)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp),
+            .padding(bottom = 20.dp)
+            .clickable {
+                navController.navigate("detail_event")
+            },
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = CardWhite
         ),
 
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 8.dp
         )
     ) {
         Column {
@@ -256,12 +321,22 @@ fun EventCard(
                     )
                     Row {
                         IconButton(
-                            onClick = { }
+                            onClick = {
+                                isLiked =!isLiked
+                            }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Share,
+                                imageVector =
+                                if (isLiked)
+                                    Icons.Default.Favorite
+                                else
+                                    Icons.Default.FavoriteBorder,
                                 contentDescription = null,
-                                tint = PrimaryBlue
+                                tint =
+                                    if (isLiked)
+                                        Color.Red
+                                else
+                                        PrimaryBlue
                             )
                         }
 

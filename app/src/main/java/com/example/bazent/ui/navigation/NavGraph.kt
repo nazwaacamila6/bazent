@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bazent.ui.screen.LoginScreen
 import com.example.bazent.ui.screen.RegisterScreen
 import com.example.bazent.ui.screen.HomeScreen
+import com.example.bazent.ui.screen.DetailEventScreen
 
 @Composable
 fun NavGraph() {
@@ -27,6 +28,9 @@ fun NavGraph() {
         }
         composable("home") {
             HomeScreen(navController)
+        }
+        composable("detail_event") {
+            DetailEventScreen(navController)
         }
     }
 }
