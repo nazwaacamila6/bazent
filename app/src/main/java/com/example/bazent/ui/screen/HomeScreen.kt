@@ -41,6 +41,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Logout
 
 data class Event(
     val title: String,
@@ -51,6 +52,10 @@ data class Event(
 
 @Composable
 fun HomeScreen(navController: NavController) {
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
 
     val events = listOf(
 
@@ -116,7 +121,7 @@ fun HomeScreen(navController: NavController) {
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                top = 50.dp,
+                                top = 20.dp,
                                 bottom = 18.dp
                             ),
 
@@ -129,14 +134,48 @@ fun HomeScreen(navController: NavController) {
                             contentDescription = null,
                             modifier = Modifier.size(55.dp)
                         )
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
+                        Box {
+
+                            Image(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = "Profile",
+
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        expanded = true
+                                    },
+
+                                contentScale = ContentScale.Crop
+                            )
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = {
+                                    expanded = false
+                                }
+                            ) {
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Logout")
+                                    },
+
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Logout,
+                                            contentDescription = "Logout"
+                                        )
+                                    },
+
+                                    onClick = {
+                                        expanded = false
+                                        navController.navigate("login")
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -253,7 +292,7 @@ fun EventCard(
                             onClick = { }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
+                                imageVector = Icons.Default.Share,
                                 contentDescription = null,
                                 tint = PrimaryBlue
                             )

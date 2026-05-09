@@ -30,11 +30,16 @@ import androidx.navigation.NavController
 import com.example.bazent.R
 import com.example.bazent.ui.theme.*
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Logout
 
 @Composable
 fun DetailEventScreen(
     navController: NavController
 ) {
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
 
     Box(
         modifier = Modifier
@@ -75,7 +80,7 @@ fun DetailEventScreen(
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                top = 50.dp,
+                                top = 20.dp,
                                 bottom = 18.dp
                             ),
 
@@ -89,16 +94,48 @@ fun DetailEventScreen(
                             modifier = Modifier.size(55.dp)
                         )
 
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = null,
+                        Box {
 
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape),
+                            Image(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = null,
 
-                            contentScale = ContentScale.Crop
-                        )
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        expanded = true
+                                    },
+
+                                contentScale = ContentScale.Crop
+                            )
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = {
+                                    expanded = false
+                                }
+                            ) {
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Logout")
+                                    },
+
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Logout,
+                                            contentDescription = "Logout"
+                                        )
+                                    },
+
+                                    onClick = {
+                                        expanded = false
+                                        navController.navigate("login")
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
 
