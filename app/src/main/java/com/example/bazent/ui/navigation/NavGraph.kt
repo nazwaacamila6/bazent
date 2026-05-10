@@ -51,78 +51,113 @@ fun NavGraph() {
         }
 
         // 2. NAVBAR OVAL BENERAN (MELAYANG)
-        if (currentRoute == "home" || currentRoute == "profile" || currentRoute == "create") {
-            NavigationBar(
+        if (currentRoute == "home" || currentRoute == "profile" || currentRoute == "create" || currentRoute == "detail_event") {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter) // Memposisikan di bawah tengah
-                    .padding(horizontal = 24.dp)   // Jarak samping
-                    .padding(bottom = 32.dp)       // Jarak bawah (Biar gak error lagi)
-                    .height(90.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape) // Bayangan OVAL
-                    .clip(CircleShape) // FISIK OVAL
-                    .border(1.dp, Color.White.copy(alpha = 0.5f), CircleShape),
-                containerColor = Color.White,
-                tonalElevation = 0.dp
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 18.dp)
             ) {
-                // --- ITEM HOME ---
-                NavigationBarItem(
-                    selected = currentRoute == "home",
-                    onClick = {
-                        navController.navigate("home") {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text("Home", fontSize = 12.sp) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = PrimaryBlue,
-                        indicatorColor = SoftBlue.copy(alpha = 0.5f),
-                        unselectedIconColor = TextGray
-                    )
-                )
 
-                // --- ITEM CREATE ---
-                NavigationBarItem(
-                    selected = currentRoute == "create",
-                    onClick = {
-                        navController.navigate("create") {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = {
-                        Box(
-                            modifier = Modifier.size(48.dp).background(PrimaryBlue, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
-                        }
-                    },
-                    label = { Text(" ") },
-                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
-                )
+                NavigationBar(
+                    modifier = Modifier
+                        .fillMaxWidth(0.86f)
+                        .height(78.dp)
+                        .shadow(
+                            elevation = 18.dp,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape),
 
-                // --- ITEM PROFILE ---
-                NavigationBarItem(
-                    selected = currentRoute == "profile",
-                    onClick = {
-                        navController.navigate("profile") {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Profile", fontSize = 12.sp) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = PrimaryBlue,
-                        indicatorColor = SoftBlue.copy(alpha = 0.5f),
-                        unselectedIconColor = TextGray
+                    containerColor = Color.White,
+                    tonalElevation = 0.dp
+                ) {
+
+                    // HOME
+                    NavigationBarItem(
+                        selected = currentRoute == "home",
+                        onClick = {
+                            navController.navigate("home")
+                        },
+                        icon = {
+                            Icon(
+                                Icons.Default.Home,
+                                contentDescription = null,
+                                modifier = Modifier.offset(y = 6.dp)
+                            )
+                        },
+                        label = {
+                            Text(
+                                "Home",
+                                fontSize = 11.sp,
+                                modifier = Modifier.offset(y = 4.dp)
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = PrimaryBlue,
+                            selectedTextColor = PrimaryBlue,
+                            indicatorColor = SoftBlue.copy(alpha = 0.3f),
+                            unselectedIconColor = TextGray
+                        )
                     )
-                )
+
+                    // RUANG KOSONG TENGAH
+                    Spacer(modifier = Modifier.width(70.dp))
+
+                    // PROFILE
+                    NavigationBarItem(
+                        selected = currentRoute == "profile",
+                        onClick = {
+                            navController.navigate("profile")
+                        },
+                        icon = {
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = null,
+                                modifier = Modifier.offset(y = 6.dp)
+                            )
+                        },
+                        label = {
+                            Text(
+                                "Profile",
+                                fontSize = 11.sp,
+                                modifier = Modifier.offset(y = 4.dp)
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = PrimaryBlue,
+                            selectedTextColor = PrimaryBlue,
+                            indicatorColor = SoftBlue.copy(alpha = 0.3f),
+                            unselectedIconColor = TextGray
+                        )
+                    )
+                }
+
+                // TOMBOL PLUS FLOATING
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-18).dp)
+                        .size(58.dp)
+                        .shadow(12.dp, CircleShape)
+                        .clip(CircleShape)
+                        .background(PrimaryBlue),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("create") {
+                                launchSingleTop = true
+                            }
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                }
             }
         }
     }

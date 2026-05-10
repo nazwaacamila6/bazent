@@ -91,6 +91,7 @@ fun ProfileScreen(
                     )
                 )
             )
+            .statusBarsPadding()
     ) {
 
         LazyColumn(
@@ -127,7 +128,7 @@ fun ProfileScreen(
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                top = 20.dp,
+                                top = 10.dp,
                                 bottom = 18.dp
                             ),
 
@@ -359,49 +360,6 @@ fun ProfileScreen(
                         }
                     }
                 }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(50.dp))
-
-                Button(
-                    onClick = {
-                        navController.navigate("login")
-                    },
-
-                    modifier = Modifier
-                        .fillMaxWidth(0.70f)
-                        .height(54.dp),
-
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF6B6B)
-                    ),
-
-                    shape = RoundedCornerShape(18.dp),
-
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 4.dp
-                    )
-                ) {
-
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = "Logout",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "Logout",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

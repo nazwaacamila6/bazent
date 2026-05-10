@@ -37,14 +37,11 @@ fun DetailEventScreen(
     navController: NavController
 ) {
 
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(SoftBlue)
+            .statusBarsPadding()
     ) {
 
         LazyColumn(
@@ -80,7 +77,7 @@ fun DetailEventScreen(
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                top = 20.dp,
+                                top = 10.dp,
                                 bottom = 18.dp
                             ),
 
@@ -102,39 +99,11 @@ fun DetailEventScreen(
 
                                 modifier = Modifier
                                     .size(52.dp)
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        expanded = true
-                                    },
+                                    .clip(CircleShape),
 
                                 contentScale = ContentScale.Crop
                             )
 
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = {
-                                    expanded = false
-                                }
-                            ) {
-
-                                DropdownMenuItem(
-                                    text = {
-                                        Text("Logout")
-                                    },
-
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Default.Logout,
-                                            contentDescription = "Logout"
-                                        )
-                                    },
-
-                                    onClick = {
-                                        expanded = false
-                                        navController.navigate("login")
-                                    }
-                                )
-                            }
                         }
                     }
                 }

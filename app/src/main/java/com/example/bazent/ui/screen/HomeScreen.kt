@@ -53,10 +53,6 @@ data class Event(
 @Composable
 fun HomeScreen(navController: NavController) {
 
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
     val events = listOf(
 
         Event(
@@ -85,6 +81,7 @@ fun HomeScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(SoftBlue)
+            .statusBarsPadding()
     ) {
 
         LazyColumn(
@@ -121,7 +118,7 @@ fun HomeScreen(navController: NavController) {
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                top = 20.dp,
+                                top = 10.dp,
                                 bottom = 18.dp
                             ),
 
@@ -142,39 +139,11 @@ fun HomeScreen(navController: NavController) {
 
                                 modifier = Modifier
                                     .size(52.dp)
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        expanded = true
-                                    },
+                                    .clip(CircleShape),
 
                                 contentScale = ContentScale.Crop
                             )
 
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = {
-                                    expanded = false
-                                }
-                            ) {
-
-                                DropdownMenuItem(
-                                    text = {
-                                        Text("Logout")
-                                    },
-
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Default.Logout,
-                                            contentDescription = "Logout"
-                                        )
-                                    },
-
-                                    onClick = {
-                                        expanded = false
-                                        navController.navigate("login")
-                                    }
-                                )
-                            }
                         }
                     }
                 }
