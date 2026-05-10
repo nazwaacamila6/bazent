@@ -47,8 +47,12 @@ dependencies {
 
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
-    implementation(platform("androidx.compose:compose-bom:2024.12.01"))
-    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
+    implementation(platform("androidx.compose:compose-bom:2024.09.00"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.androidx.core.ktx)

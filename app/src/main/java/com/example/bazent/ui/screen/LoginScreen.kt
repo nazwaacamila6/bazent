@@ -30,15 +30,23 @@ import com.example.bazent.R
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.LightBlue
 import com.example.bazent.ui.theme.DarkBlue
+import android.widget.Toast
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(navController: NavController) {
 
     val scrollState = rememberScrollState()
 
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
 
     val gradient = Brush.horizontalGradient(
         colors = listOf(
@@ -104,7 +112,7 @@ fun LoginScreen(navController: NavController) {
                 ) {
                     // USERNAME
                     Text(
-                        text = "Username",
+                        text = "Email",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -112,10 +120,13 @@ fun LoginScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(10.dp))
 
                     OutlinedTextField(
-                        value = username,
-                        onValueChange = { username = it },
+                        value = email,
+                        onValueChange = { email = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Enter a username") },
+                        placeholder = { Text("Enter a Email") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email
+                        ),
                         leadingIcon = {
                             Icon(Icons.Default.Person, null, tint = MaterialTheme.colorScheme.primary)
                         },
@@ -165,7 +176,41 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(28.dp))
                     Button(
-                        onClick = {navController.navigate("Home")},
+                        onClick = {
+
+                            if (email.isEmpty() || password.isEmpty()) {
+
+                                Toast.makeText(
+                                    context,
+                                    "All fields must be filled",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            } else {
+
+                                auth.signInWithEmailAndPassword(email, password)
+
+                                    .addOnSuccessListener {
+
+                                        Toast.makeText(
+                                            context,
+                                            "Login Success",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        navController.navigate("home")
+                                    }
+
+                                    .addOnFailureListener {
+
+                                        Toast.makeText(
+                                            context,
+                                            it.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(58.dp),

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.bazent.ui.theme.CardWhite
 import com.example.bazent.ui.theme.DarkBlue
 import com.example.bazent.ui.theme.LightBlue
 import com.example.bazent.ui.theme.PrimaryBlue
@@ -29,7 +28,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
@@ -44,19 +42,27 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.Timestamp
 
 @Composable
 fun RegisterScreen(
     navController: NavController
 ) {
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
-    var nik by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
     Box(
         modifier = Modifier
@@ -143,13 +149,13 @@ fun RegisterScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // USERNAME
+                    // EMAIL
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
 
                         Text(
-                            text = "USERNAME",
+                            text = "EMAIL",
                             color = PrimaryBlue,
                             fontWeight = FontWeight.Bold
                         )
@@ -157,16 +163,20 @@ fun RegisterScreen(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         OutlinedTextField(
-                            value = username,
+                            value = email,
                             onValueChange = {
-                                username = it
+                                email = it
                             },
 
                             modifier = Modifier.fillMaxWidth(),
 
                             placeholder = {
-                                Text("Enter username")
+                                Text("Enter email")
                             },
+
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email
+                            ),
 
                             shape = RoundedCornerShape(18.dp),
 
@@ -442,7 +452,86 @@ fun RegisterScreen(
                                 shape = RoundedCornerShape(18.dp)
                             ).clickable {
 
-                                navController.navigate("home")
+                                if (email.isEmpty() ||
+                                    fullName.isEmpty() ||
+                                    phoneNumber.isEmpty() ||
+                                    password.isEmpty() ||
+                                    confirmPassword.isEmpty()
+                                ) {
+
+                                    Toast.makeText(
+                                        context,
+                                        "All fields must be filled",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                } else if (password != confirmPassword) {
+
+                                    Toast.makeText(
+                                        context,
+                                        "Password does not match",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+                                        Toast.makeText(
+                                            context,
+                                            "Invalid email format",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                    } else {
+
+                                        auth.createUserWithEmailAndPassword(email, password)
+                                        .addOnSuccessListener {
+
+                                            val uid = auth.currentUser?.uid
+
+                                            val userData = hashMapOf(
+                                                "email" to email,
+                                                "fullName" to fullName,
+                                                "phoneNumber" to phoneNumber,
+                                                "createdAt" to Timestamp.now()
+                                            )
+
+                                            if (uid != null) {
+
+                                                db.collection("users")
+                                                    .document(uid)
+                                                    .set(userData)
+
+                                                    .addOnSuccessListener {
+
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Register Success",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+
+                                                        navController.navigate("home")
+                                                    }
+
+                                                    .addOnFailureListener {
+
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Failed to save user data",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                            }
+                                        }
+
+                                        .addOnFailureListener {
+
+                                            Toast.makeText(
+                                                context,
+                                                it.message,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
 
                             },
                         contentAlignment = Alignment.Center
