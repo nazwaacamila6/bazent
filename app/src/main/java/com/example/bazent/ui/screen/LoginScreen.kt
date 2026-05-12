@@ -35,6 +35,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import com.google.firebase.auth.FirebaseAuth
+import com.example.bazent.data.local.AppDatabase
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -47,6 +49,10 @@ fun LoginScreen(navController: NavController) {
 
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
+
+    val scope = rememberCoroutineScope()
+    val dbRoom = AppDatabase.getDatabase(context)
+    val userDao = dbRoom.userDao()
 
     val gradient = Brush.horizontalGradient(
         colors = listOf(
@@ -123,7 +129,7 @@ fun LoginScreen(navController: NavController) {
                         value = email,
                         onValueChange = { email = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Enter a Email") },
+                        placeholder = { Text("Enter Email") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email
                         ),
@@ -152,7 +158,7 @@ fun LoginScreen(navController: NavController) {
                         value = password,
                         onValueChange = { password = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Enter a password") },
+                        placeholder = { Text("Enter password") },
                         leadingIcon = {
                             Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.primary)
                         },
@@ -188,27 +194,48 @@ fun LoginScreen(navController: NavController) {
 
                             } else {
 
-                                auth.signInWithEmailAndPassword(email, password)
+                                scope.launch {
 
-                                    .addOnSuccessListener {
+                                    auth.signInWithEmailAndPassword(email, password)
 
-                                        Toast.makeText(
-                                            context,
-                                            "Login Success",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        .addOnSuccessListener {
 
-                                        navController.navigate("home")
-                                    }
+                                            Toast.makeText(
+                                                context,
+                                                "Login Success",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
 
-                                    .addOnFailureListener {
+                                            navController.navigate("home")
+                                        }
 
-                                        Toast.makeText(
-                                            context,
-                                            it.message,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                        .addOnFailureListener {
+
+                                            scope.launch {
+
+                                                val localUser = userDao.login(email, password)
+
+                                                if (localUser != null) {
+
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Login Offline Success",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+
+                                                    navController.navigate("home")
+
+                                                } else {
+
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Invalid email or password",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                        }
+                                }
                             }
                         },
                         modifier = Modifier

@@ -44,9 +44,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import com.example.bazent.data.local.AppDatabase
+import com.example.bazent.data.local.UserEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -63,6 +66,11 @@ fun RegisterScreen(
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
+
+    val scope = rememberCoroutineScope()
+
+    val dbRoom = AppDatabase.getDatabase(context)
+    val userDao = dbRoom.userDao()
 
     Box(
         modifier = Modifier
@@ -483,53 +491,63 @@ fun RegisterScreen(
 
                                     } else {
 
-                                        auth.createUserWithEmailAndPassword(email, password)
-                                        .addOnSuccessListener {
+                                        scope.launch {
 
-                                            val uid = auth.currentUser?.uid
-
-                                            val userData = hashMapOf(
-                                                "email" to email,
-                                                "fullName" to fullName,
-                                                "phoneNumber" to phoneNumber,
-                                                "createdAt" to Timestamp.now()
+                                            userDao.insertUser(
+                                                UserEntity(
+                                                    email = email,
+                                                    fullName = fullName,
+                                                    phoneNumber = phoneNumber,
+                                                    password = password
+                                                )
                                             )
+                                            auth.createUserWithEmailAndPassword(email, password)
+                                                .addOnSuccessListener {
 
-                                            if (uid != null) {
+                                                    val uid = auth.currentUser?.uid
 
-                                                db.collection("users")
-                                                    .document(uid)
-                                                    .set(userData)
+                                                    val userData = hashMapOf(
+                                                        "email" to email,
+                                                        "fullName" to fullName,
+                                                        "phoneNumber" to phoneNumber,
+                                                        "createdAt" to Timestamp.now()
+                                                    )
 
-                                                    .addOnSuccessListener {
+                                                    if (uid != null) {
 
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Register Success",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                        db.collection("users")
+                                                            .document(uid)
+                                                            .set(userData)
 
-                                                        navController.navigate("home")
+                                                            .addOnSuccessListener {
+
+                                                                Toast.makeText(
+                                                                    context,
+                                                                    "Register Success",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+
+                                                                navController.navigate("home")
+                                                            }
+
+                                                            .addOnFailureListener {
+
+                                                                Toast.makeText(
+                                                                    context,
+                                                                    "Failed to save user data",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }
                                                     }
+                                                }
+                                                .addOnFailureListener {
 
-                                                    .addOnFailureListener {
-
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Failed to save user data",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
-                                            }
-                                        }
-
-                                        .addOnFailureListener {
-
-                                            Toast.makeText(
-                                                context,
-                                                it.message,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                                    Toast.makeText(
+                                                        context,
+                                                        it.message,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
                                         }
                                 }
 

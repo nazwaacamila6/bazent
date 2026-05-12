@@ -31,6 +31,9 @@ import com.example.bazent.ui.theme.LightBlue
 import com.example.bazent.ui.theme.PrimaryBlue
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.TextGray
+import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 data class EventData(
     val title: String,
@@ -43,6 +46,28 @@ data class EventData(
 fun ProfileScreen(
     navController: NavController
 ) {
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
+    var fullName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+
+        val uid = auth.currentUser?.uid
+
+        if (uid != null) {
+
+            db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener { document ->
+
+                    fullName = document.getString("fullName") ?: ""
+                    email = document.getString("email") ?: ""
+                }
+        }
+    }
 
     var selectedTab by remember {
         mutableStateOf("shared")
@@ -176,10 +201,19 @@ fun ProfileScreen(
 
                 // USERNAME
                 Text(
-                    text = "@felix.ocean",
+                    text = fullName,
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                     color = DarkBlue
+                )
+
+                // EMAIL
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = email,
+                    color = TextGray,
+                    fontSize = 15.sp
                 )
 
                 Spacer(modifier = Modifier.height(36.dp))
@@ -360,6 +394,63 @@ fun ProfileScreen(
                         }
                     }
                 }
+            }
+
+            item {
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(
+                    onClick = {
+
+                        auth.signOut()
+
+                        navController.navigate("login") {
+                            popUpTo("home") {
+                                inclusive = true
+                            }
+                        }
+                    },
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .height(52.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFE5E5)
+                    ),
+
+                    shape = RoundedCornerShape(50.dp),
+
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 0.dp
+                    ),
+
+                    contentPadding = PaddingValues(
+                        horizontal = 24.dp,
+                        vertical = 12.dp
+                    )
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = "Logout",
+                        tint = Color(0xFFE53935),
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Text(
+                        text = "Logout",
+                        color = Color(0xFFE53935),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
     }
