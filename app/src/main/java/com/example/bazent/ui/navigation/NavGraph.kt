@@ -45,13 +45,22 @@ fun NavGraph() {
             composable("register") { RegisterScreen(navController) }
             composable("login") { LoginScreen(navController) }
             composable("home") { HomeScreen(navController) }
-            composable("detail_event") { DetailEventScreen(navController) }
+            composable("detail_event/{eventId}") { backStackEntry ->
+
+                val eventId =
+                    backStackEntry.arguments?.getString("eventId") ?: ""
+
+                DetailEventScreen(
+                    navController = navController,
+                    eventId = eventId
+                )
+            }
             composable("profile") { ProfileScreen(navController) }
             composable("create") { CreateEventScreen(navController) }
         }
 
         // 2. NAVBAR OVAL BENERAN (MELAYANG)
-        if (currentRoute == "home" || currentRoute == "profile" || currentRoute == "create" || currentRoute == "detail_event") {
+        if (currentRoute == "home" || currentRoute == "profile" || currentRoute == "create" || currentRoute?.startsWith("detail_event") == true) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -81,15 +90,13 @@ fun NavGraph() {
                         icon = {
                             Icon(
                                 Icons.Default.Home,
-                                contentDescription = null,
-                                modifier = Modifier.offset(y = 6.dp)
+                                contentDescription = null
                             )
                         },
                         label = {
                             Text(
                                 "Home",
-                                fontSize = 11.sp,
-                                modifier = Modifier.offset(y = 4.dp)
+                                fontSize = 11.sp
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(

@@ -3,19 +3,14 @@ package com.example.bazent.ui.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material3.*
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,12 +25,35 @@ import androidx.navigation.NavController
 import com.example.bazent.R
 import com.example.bazent.ui.theme.*
 import androidx.compose.runtime.*
-import androidx.compose.material.icons.filled.Logout
+import coil.compose.AsyncImage
+import java.text.SimpleDateFormat
+import java.util.Locale
+import com.example.bazent.viewmodel.DetailEventViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun DetailEventScreen(
-    navController: NavController
+    navController: NavController,
+    eventId: String,
+    viewModel: DetailEventViewModel = viewModel()
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getEvent(eventId)
+    }
+
+    val currentEvent = viewModel.event.value ?: return
+
+    val formattedDate =
+        currentEvent.eventDate?.toDate()?.let {
+            SimpleDateFormat(
+                "dd MMM yyyy",
+                Locale.getDefault()
+            ).format(it)
+        } ?: ""
+
+val isJoined =
+    viewModel.isJoined(currentEvent)
 
     Box(
         modifier = Modifier
@@ -122,8 +140,8 @@ fun DetailEventScreen(
 
                         Box {
 
-                            Image(
-                                painter = painterResource(id = R.drawable.music),
+                            AsyncImage(
+                                model = currentEvent.imageUrl,
                                 contentDescription = null,
 
                                 modifier = Modifier
@@ -158,7 +176,7 @@ fun DetailEventScreen(
 
                     // TITLE
                     Text(
-                        text = "Acoustic Garden\nNight",
+                        text = currentEvent.title,
                         fontSize = 28.sp,
                         lineHeight = 34.sp,
                         fontWeight = FontWeight.Bold,
@@ -166,6 +184,9 @@ fun DetailEventScreen(
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -181,7 +202,7 @@ fun DetailEventScreen(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = "SATURDAY, OCT 26 • 7:00 PM",
+                            text = formattedDate,
                             color = PrimaryBlue,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
@@ -206,7 +227,7 @@ fun DetailEventScreen(
                         ) {
 
                             Text(
-                                text = "Nikmati malam santai dengan live music akustik bareng teman teman. Suasana hangat, lampu gantung, dan lagu - lagu santai bikin momen nongkrong makin seru.",
+                                text = currentEvent.description,
 
                                 fontSize = 16.sp,
                                 lineHeight = 30.sp,
@@ -239,7 +260,7 @@ fun DetailEventScreen(
                                     Spacer(modifier = Modifier.width(10.dp))
 
                                     Text(
-                                        text = "Twin House Cipete, Jakarta Selatan (Outdoor Area)",
+                                        text = currentEvent.location,
                                         color = TextGray,
                                         fontSize = 15.sp
                                     )
@@ -266,7 +287,7 @@ fun DetailEventScreen(
                         ) {
 
                             Text(
-                                text = "Participants (42)",
+                                text = "Participants (${currentEvent.joinedUsers.size})",
                                 color = DarkBlue,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 22.sp
@@ -280,7 +301,12 @@ fun DetailEventScreen(
 
                     // BUTTON
                     Button(
-                        onClick = { },
+                        onClick = {
+
+                            viewModel.joinEvent(currentEvent.id)
+                        },
+
+                        enabled = !isJoined,
 
                         modifier = Modifier
                             .fillMaxWidth()
@@ -294,7 +320,11 @@ fun DetailEventScreen(
                     ) {
 
                         Text(
-                            text = "Join This Event",
+                            text =
+                                if (isJoined)
+                                    "Already Joined"
+                                else
+                                    "Join This Event",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )

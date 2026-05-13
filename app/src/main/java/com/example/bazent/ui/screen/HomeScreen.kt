@@ -1,5 +1,7 @@
 package com.example.bazent.ui.screen
 
+import com.example.bazent.viewmodel.HomeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,9 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,49 +32,27 @@ import com.example.bazent.R
 import coil.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import com.example.bazent.ui.theme.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
-import androidx.compose.material.icons.filled.Logout
+import com.example.bazent.data.Event
+import java.text.SimpleDateFormat
+import java.util.Locale
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuth
 
-data class Event(
-    val title: String,
-    val date: String,
-    val location: String,
-    val image: Int
-)
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    homeViewModel: HomeViewModel = viewModel()
+) {
 
-    val events = listOf(
-
-        Event(
-            title = "Green Community Walk",
-            date = "Oct 24, 5:00 PM",
-            location = "Jakarta Selatan",
-            image = R.drawable.menanam
-        ),
-
-        Event(
-            title = "Acoustic Garden Night",
-            date = "Oct 36, 7:00 PM",
-            location = "Cipete Jakarta Selatan",
-            image = R.drawable.music
-        ),
-
-        Event(
-            title = "Library Study Club",
-            date = "Oct 27, 6:30 AM",
-            location = "Jakarta Pusat",
-            image = R.drawable.belajar
-        )
-    )
+    val events = homeViewModel.events
 
     Box(
         modifier = Modifier
@@ -176,9 +153,13 @@ fun HomeScreen(navController: NavController) {
                 Box(
                     modifier = Modifier.padding(horizontal = 20.dp)
                 ) {
+
                     EventCard(
                         event = event,
-                        navController = navController
+                        navController = navController,
+                        onLikeClick = {
+                            homeViewModel.toggleLike(event)
+                        }
                     )
                 }
             }
@@ -189,18 +170,28 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun EventCard(
     event: Event,
-    navController: NavController
+    navController: NavController,
+    onLikeClick: () -> Unit
 ) {
 
-    var isLiked by remember{
-        mutableStateOf(false)
-    }
+    val context = LocalContext.current
+
+    val currentUserId =
+        FirebaseAuth
+            .getInstance()
+            .currentUser
+            ?.uid
+            ?: ""
+
+    val isLiked =
+        event.likedBy.contains(currentUserId)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp)
             .clickable {
-                navController.navigate("detail_event")
+                navController.navigate("detail_event/${event.id}")
             },
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
@@ -212,18 +203,28 @@ fun EventCard(
         )
     ) {
         Column {
-            Image(
-                painter = painterResource(id = event.image),
+            AsyncImage(
+                model = event.imageUrl,
                 contentDescription = null,
 
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp),
+
                 contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {
+
+                val formattedDate =
+                    event.eventDate?.toDate()?.let {
+                        SimpleDateFormat(
+                            "dd MMM yyyy",
+                            Locale.getDefault()
+                        ).format(it)
+                    } ?: ""
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -239,7 +240,7 @@ fun EventCard(
                     Row {
                         IconButton(
                             onClick = {
-                                isLiked =!isLiked
+                                onLikeClick()
                             }
                         ) {
                             Icon(
@@ -258,7 +259,32 @@ fun EventCard(
                         }
 
                         IconButton(
-                            onClick = { }
+                            onClick = {
+
+                                val shareText = """
+                                    🎉 Join this event on Bazent!
+                                    
+                                    ${event.title}
+                                    
+                                    📅 Date: $formattedDate
+                                    📍 Location: ${event.location}
+                                    
+                                    Don't miss it 🚀
+                                    
+                                    Download Bazent and discover more events!
+                                """.trimIndent()
+
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                    type = "text/plain"
+                                }
+
+                                val shareIntent =
+                                    Intent.createChooser(sendIntent, "Share Event")
+
+                                context.startActivity(shareIntent)
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Share,
@@ -269,10 +295,18 @@ fun EventCard(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "${event.likes} likes",
+                    color = TextGray,
+                    fontSize = 14.sp
+                )
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = event.date,
+                    text = formattedDate,
                     color = TextGray
                 )
 
