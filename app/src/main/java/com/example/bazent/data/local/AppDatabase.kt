@@ -10,7 +10,8 @@ import androidx.room.TypeConverters
     entities = [UserEntity::class, EventEntity::class], // <--- Sudah sinkron menggunakan EventEntity
     version = 2
 )
-@TypeConverters(TimestampConverter::class)
+@TypeConverters(TimestampConverter::class,
+    Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao

@@ -18,7 +18,7 @@ data class EventEntity(
     val likes: Int = 0,
 
     val likedBy: List<String> = emptyList(),
-    val joinedUsers: List<String> = emptyList(),
+    val joinedUser: List<String> = emptyList(),
 
     val maxParticipants: Int = 0,
 

@@ -232,7 +232,9 @@ fun EventCard(
                         color = DarkBlue,
                         modifier = Modifier.weight(1f)
                     )
-                    Row {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         IconButton(
                             onClick = {
                                 onLikeClick()
@@ -252,6 +254,14 @@ fun EventCard(
                                         PrimaryBlue
                             )
                         }
+
+                        Text(
+                            text = "${event.likes}",
+                            color = TextGray,
+                            fontSize = 14.sp
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         IconButton(
                             onClick = {
@@ -289,14 +299,6 @@ fun EventCard(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "${event.likes} likes",
-                    color = TextGray,
-                    fontSize = 14.sp
-                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 

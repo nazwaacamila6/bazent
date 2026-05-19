@@ -287,7 +287,7 @@ val isJoined =
                         ) {
 
                             Text(
-                                text = "Participants (${currentEvent.joinedUsers.size})",
+                                text = "Participants (${currentEvent.joinedUser.size})",
                                 color = DarkBlue,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 22.sp

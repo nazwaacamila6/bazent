@@ -79,7 +79,7 @@ class CreateEventViewModel : ViewModel() {
             createdAt = Timestamp(Date()), // Waktu pembuatan sekarang
             eventDate = Timestamp(selectedCalendar.time), // Menggunakan tanggal & jam asli pilihan user
             likedBy = emptyList(),
-            joinedUsers = emptyList(),
+            joinedUser = emptyList(),
             likes = 0
         )
 

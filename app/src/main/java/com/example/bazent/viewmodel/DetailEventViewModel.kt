@@ -52,6 +52,6 @@ class DetailEventViewModel: ViewModel() {
 
     fun isJoined(event: EventEntity): Boolean {
 
-        return event.joinedUsers.contains(currentUserId)
+        return event.joinedUser.contains(currentUserId)
     }
 }
