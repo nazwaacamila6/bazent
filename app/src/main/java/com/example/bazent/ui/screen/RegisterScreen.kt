@@ -44,12 +44,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
-import com.example.bazent.data.local.AppDatabase
-import com.example.bazent.data.local.UserEntity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.Timestamp
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bazent.viewmodel.RegisterViewModel
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun RegisterScreen(
@@ -64,13 +61,29 @@ fun RegisterScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-    val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+    val viewModel: RegisterViewModel = viewModel()
 
-    val scope = rememberCoroutineScope()
+    val registerState by viewModel.registerState.collectAsState()
 
-    val dbRoom = AppDatabase.getDatabase(context)
-    val userDao = dbRoom.userDao()
+    LaunchedEffect(registerState) {
+        registerState?.let {
+            Toast.makeText(
+                context,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            if (it == "SUCCESS") {
+                navController.navigate("home") {
+                    popUpTo("register") {
+                        inclusive = true
+                    }
+                }
+            }
+
+            viewModel.clearState()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -460,96 +473,13 @@ fun RegisterScreen(
                                 shape = RoundedCornerShape(18.dp)
                             ).clickable {
 
-                                if (email.isEmpty() ||
-                                    fullName.isEmpty() ||
-                                    phoneNumber.isEmpty() ||
-                                    password.isEmpty() ||
-                                    confirmPassword.isEmpty()
-                                ) {
-
-                                    Toast.makeText(
-                                        context,
-                                        "All fields must be filled",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                } else if (password != confirmPassword) {
-
-                                    Toast.makeText(
-                                        context,
-                                        "Password does not match",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-
-                                        Toast.makeText(
-                                            context,
-                                            "Invalid email format",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-
-                                    } else {
-
-                                        scope.launch {
-
-                                            userDao.insertUser(
-                                                UserEntity(
-                                                    email = email,
-                                                    fullName = fullName,
-                                                    phoneNumber = phoneNumber,
-                                                    password = password
-                                                )
-                                            )
-                                            auth.createUserWithEmailAndPassword(email, password)
-                                                .addOnSuccessListener {
-
-                                                    val uid = auth.currentUser?.uid
-
-                                                    val userData = hashMapOf(
-                                                        "email" to email,
-                                                        "fullName" to fullName,
-                                                        "phoneNumber" to phoneNumber,
-                                                        "createdAt" to Timestamp.now()
-                                                    )
-
-                                                    if (uid != null) {
-
-                                                        db.collection("users")
-                                                            .document(uid)
-                                                            .set(userData)
-
-                                                            .addOnSuccessListener {
-
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    "Register Success",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
-
-                                                                navController.navigate("home")
-                                                            }
-
-                                                            .addOnFailureListener {
-
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    "Failed to save user data",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
-                                                            }
-                                                    }
-                                                }
-                                                .addOnFailureListener {
-
-                                                    Toast.makeText(
-                                                        context,
-                                                        it.message,
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                        }
-                                }
+                                viewModel.registerUser(
+                                    email = email,
+                                    fullName = fullName,
+                                    phoneNumber = phoneNumber,
+                                    password = password,
+                                    confirmPassword = confirmPassword
+                                )
 
                             },
                         contentAlignment = Alignment.Center
