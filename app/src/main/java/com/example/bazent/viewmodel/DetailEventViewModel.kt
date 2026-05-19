@@ -2,7 +2,7 @@ package com.example.bazent.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.bazent.data.Event
+import com.example.bazent.data.EventEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,7 +19,7 @@ class DetailEventViewModel: ViewModel() {
             ?: ""
 
     var event =
-        mutableStateOf<Event?>(null)
+        mutableStateOf<EventEntity?>(null)
         private set
 
     fun getEvent(eventId: String) {
@@ -33,7 +33,7 @@ class DetailEventViewModel: ViewModel() {
                 if (value != null && value.exists()) {
 
                     event.value =
-                        value.toObject(Event::class.java)?.copy(
+                        value.toObject(EventEntity::class.java)?.copy(
                             id = value.id
                         )
                 }
@@ -50,7 +50,7 @@ class DetailEventViewModel: ViewModel() {
             )
     }
 
-    fun isJoined(event: Event): Boolean {
+    fun isJoined(event: EventEntity): Boolean {
 
         return event.joinedUsers.contains(currentUserId)
     }

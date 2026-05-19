@@ -2,7 +2,7 @@ package com.example.bazent.data
 
 import com.google.firebase.Timestamp
 
-data class Event(
+data class EventEntity(
     val id: String = "",
     val title: String = "",
     val description: String = "",

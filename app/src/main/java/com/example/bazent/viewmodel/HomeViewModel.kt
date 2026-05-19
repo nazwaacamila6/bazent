@@ -2,7 +2,7 @@ package com.example.bazent.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.bazent.data.Event
+import com.example.bazent.data.EventEntity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 
@@ -16,7 +16,7 @@ class HomeViewModel : ViewModel() {
             ?.uid
             ?: ""
 
-    var events = mutableStateListOf<Event>()
+    var events = mutableStateListOf<EventEntity>()
         private set
 
     init {
@@ -34,7 +34,7 @@ class HomeViewModel : ViewModel() {
 
                 value?.documents?.mapNotNull { doc ->
 
-                    doc.toObject(Event::class.java)?.copy(
+                    doc.toObject(EventEntity::class.java)?.copy(
                         id = doc.id
                     )
 
@@ -44,7 +44,7 @@ class HomeViewModel : ViewModel() {
             }
     }
 
-    fun toggleLike(event: Event) {
+    fun toggleLike(event: EventEntity) {
 
         val isLiked =
             event.likedBy.contains(currentUserId)

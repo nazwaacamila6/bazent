@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.bazent.data.Event
+import com.example.bazent.data.EventEntity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore // <--- IMPORT BARU
@@ -67,7 +67,7 @@ class CreateEventViewModel : ViewModel() {
         val eventRef = db.collection("Events").document()
 
         // Membungkus data ke dalam format Data Class Event untuk Firebase
-        val newEvent = Event(
+        val newEvent = EventEntity(
             id = eventRef.id, // <--- Memasukkan id otomatis bawaan Firestore tadi ke dalam objek Event
             title = title,
             description = description,
