@@ -3,8 +3,13 @@ package com.example.bazent.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.bazent.data.local.AppDatabase
 import com.example.bazent.data.local.EventEntity
+import kotlinx.coroutines.launch
+import java.util.UUID
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore // <--- IMPORT BARU
@@ -13,8 +18,10 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class CreateEventViewModel : ViewModel() {
+class CreateEventViewModel(application: Application) : AndroidViewModel(application) {
 
+    // Hubungkan ViewModel ini dengan database lokal Room kamu
+    private val roomDb = AppDatabase.getDatabase(application)
     // 1. State untuk menampung inputan user (Pencatat Sementara)
     var title by mutableStateOf("")
     var date by mutableStateOf("") // Tampilan String di form (cth: 19 May 2026)
@@ -100,8 +107,43 @@ class CreateEventViewModel : ViewModel() {
     }
 
     // 3. Fungsi untuk handle Draft
-    fun saveToDraft() {
-        println("Log: Tersimpan di draft lokal: $title")
+    // 3. Fungsi untuk handle Draft dan menyimpannya ke Room Database (OFFLINE)
+    fun saveToDraft(onSuccess: () -> Unit) {
+        val currentUserId = auth.currentUser?.uid ?: ""
+
+        // Membuat ID unik sementara khusus untuk draft lokal HP kamu
+        val localDraftId = "draft_${UUID.randomUUID()}"
+
+        // Bungkus semua inputan form ke dalam objek EventEntity
+        val draftEvent = EventEntity(
+            id = localDraftId,
+            title = title,
+            description = description,
+            location = location,
+            userId = currentUserId,
+            imageUrl = imageUrl,
+            status = "draft", // <--- KUNCI: Kita tandai statusnya sebagai "draft"
+            maxParticipants = maxParticipants,
+            createdAt = Timestamp(Date()),
+            eventDate = Timestamp(selectedCalendar.time),
+            likedBy = emptyList(),
+            joinedUser = emptyList(),
+            likes = 0
+        )
+
+        // Room wajib dijalankan di background thread (Coroutine), makanya dibungkus viewModelScope
+        viewModelScope.launch {
+            try {
+                // Perintah memasukkan data ke tabel lokal lewat EventDao yang kamu buat tadi
+                roomDb.eventDao().insertDraft(draftEvent)
+                println("Log: Tersimpan di draft lokal Room: ${draftEvent.title}")
+
+                clearFields() // Bersihkan form biar kosong kembali
+                onSuccess()   // Beri sinyal ke Screen agar menutup halaman form
+            } catch (e: Exception) {
+                println("Log: Gagal menyimpan draf ke lokal: ${e.message}")
+            }
+        }
     }
 
     // 4. Fungsi reset fields (biasanya dipakai setelah sukses simpan)

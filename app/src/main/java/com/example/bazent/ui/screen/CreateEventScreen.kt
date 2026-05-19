@@ -217,14 +217,18 @@ fun CreateEventScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
-                    onClick = { viewModel.saveToDraft() },
+                    onClick = {
+                        // Panggil fungsi draft dan suruh navController buat balik halaman pas sukses
+                        viewModel.saveToDraft(onSuccess = {
+                            navController.popBackStack()
+                        })
+                    },
                     modifier = Modifier.weight(1f).height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BCD4)),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("Draft", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
-
                 Button(
                     onClick = {
                         viewModel.createEvent(onSuccess = {
