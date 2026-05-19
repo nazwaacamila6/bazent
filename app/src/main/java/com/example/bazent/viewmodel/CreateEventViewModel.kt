@@ -81,7 +81,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
             location = location,
             userId = currentUserId,
             imageUrl = imageUrl, // Sementara kosong/default
-            status = "active",
+            status = "share",
             maxParticipants = maxParticipants,
             createdAt = Timestamp(Date()), // Waktu pembuatan sekarang
             eventDate = Timestamp(selectedCalendar.time), // Menggunakan tanggal & jam asli pilihan user

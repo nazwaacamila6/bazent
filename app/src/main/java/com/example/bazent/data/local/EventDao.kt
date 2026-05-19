@@ -9,11 +9,11 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraft(event: EventEntity)
 
-    // 2. Fungsi untuk mengambil semua daftar draf event milik user yang sedang login
-    @Query("SELECT * FROM events_local WHERE userId = :currentUserId")
+    // 2. KUNCI BARU: Ditambahkan filter AND status = 'draft'
+    @Query("SELECT * FROM events_local WHERE userId = :currentUserId AND status = 'draft'")
     suspend fun getAllDrafts(currentUserId: String): List<EventEntity>
 
-    // 3. Fungsi untuk menghapus draf dari lokal HP (biasanya setelah sukses di-upload ke Firebase)
+    // 3. Fungsi untuk menghapus draf dari lokal HP
     @Query("DELETE FROM events_local WHERE id = :eventId")
     suspend fun deleteDraft(eventId: String)
 }
