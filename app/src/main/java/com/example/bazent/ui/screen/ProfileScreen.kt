@@ -2,7 +2,6 @@ package com.example.bazent.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,9 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bazent.R
 import com.example.bazent.ui.theme.DarkBlue
@@ -31,78 +30,31 @@ import com.example.bazent.ui.theme.LightBlue
 import com.example.bazent.ui.theme.PrimaryBlue
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.TextGray
-import androidx.compose.ui.platform.LocalContext
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-
-data class EventData(
-    val title: String,
-    val location: String,
-    val date: String,
-    val image: Int
-)
+import com.example.bazent.viewmodel.ProfileViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ProfileScreen(
     navController: NavController
 ) {
-    val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
 
-    var fullName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    val viewModel : ProfileViewModel = viewModel()
 
-    LaunchedEffect(Unit) {
-
-        val uid = auth.currentUser?.uid
-
-        if (uid != null) {
-
-            db.collection("users")
-                .document(uid)
-                .get()
-                .addOnSuccessListener { document ->
-
-                    fullName = document.getString("fullName") ?: ""
-                    email = document.getString("email") ?: ""
-                }
-        }
-    }
+    val fullName by viewModel.fullName.collectAsState()
+    val email by viewModel.email.collectAsState()
 
     var selectedTab by remember {
         mutableStateOf("shared")
     }
 
-    val sharedEvents = listOf(
-        EventData(
-            "Late Night Music",
-            "Sky Lounge",
-            "Nov 02",
-            R.drawable.music
-        ),
+    val sharedEvents by viewModel.sharedEvents.collectAsState()
 
-        EventData(
-            "Creative Design Talk",
-            "City Hub",
-            "Nov 05",
-            R.drawable.belajar
-        ),
-    )
+    val draftEvents by viewModel.draftEvents.collectAsState()
 
-    val draftEvents = listOf(
-        EventData(
-            "Coffee & Coding Meetup",
-            "Downtown Studio",
-            "Oct 24",
-            R.drawable.coding
-        ),
-
-        EventData(
-            "Morning Yoga Flow",
-            "Seaside Deck",
-            "Oct 27",
-            R.drawable.yoga
-        )
+    val formatter = SimpleDateFormat(
+        "dd MMM yyyy",
+        Locale.getDefault()
     )
 
     Box(
@@ -292,6 +244,27 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(30.dp))
             }
 
+            if (
+                (selectedTab == "shared" && sharedEvents.isEmpty()) ||
+                (selectedTab == "draft" && draftEvents.isEmpty())
+            ) {
+
+                item {
+
+                    Text(
+                        text =
+                            if (selectedTab == "shared")
+                                "No shared events yet"
+                            else
+                                "No draft events yet",
+
+                        color = TextGray,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(top = 40.dp)
+                    )
+                }
+            }
+
             // EVENT LIST
             items(
                 if (selectedTab == "shared")
@@ -323,7 +296,7 @@ fun ProfileScreen(
                     ) {
 
                         Image(
-                            painter = painterResource(id = event.image),
+                            painter = painterResource(id = R.drawable.placeholder),
                             contentDescription = event.title,
 
                             modifier = Modifier
@@ -363,7 +336,11 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.height(4.dp))
 
                             Text(
-                                text = "${event.location} • ${event.date}",
+                                text = "${event.location} • ${
+                                    event.eventDate?.toDate()?.let {
+                                        formatter.format(it)
+                                    } ?: ""
+                                }",
                                 color = TextGray,
                                 fontSize = 14.sp
                             )
@@ -403,7 +380,7 @@ fun ProfileScreen(
                 Button(
                     onClick = {
 
-                        auth.signOut()
+                        viewModel.logout()
 
                         navController.navigate("login") {
                             popUpTo("home") {
