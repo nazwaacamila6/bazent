@@ -25,7 +25,7 @@ class HomeViewModel : ViewModel() {
 
     private fun getEvents() {
 
-        db.collection("events")
+        db.collection("Events")
             .addSnapshotListener { value, error ->
 
                 if (error != null) return@addSnapshotListener
@@ -58,7 +58,7 @@ class HomeViewModel : ViewModel() {
 
         val updatedLikes = updatedLikedBy.size
 
-        db.collection("events")
+        db.collection("Events")
             .document(event.id)
             .update(
                 mapOf(

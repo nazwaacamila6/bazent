@@ -24,7 +24,7 @@ class DetailEventViewModel: ViewModel() {
 
     fun getEvent(eventId: String) {
 
-        db.collection("events")
+        db.collection("Events")
             .document(eventId)
             .addSnapshotListener { value, error ->
 
@@ -42,10 +42,10 @@ class DetailEventViewModel: ViewModel() {
 
     fun joinEvent(eventId: String) {
 
-        db.collection("events")
+        db.collection("Events")
             .document(eventId)
             .update(
-                "joinedUsers",
+                "joinedUser",
                 FieldValue.arrayUnion(currentUserId)
             )
     }

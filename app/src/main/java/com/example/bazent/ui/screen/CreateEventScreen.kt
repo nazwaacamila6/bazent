@@ -1,5 +1,6 @@
 package com.example.bazent.ui.screen
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,15 +24,42 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bazent.R
 import com.example.bazent.ui.theme.*
+import com.example.bazent.viewmodel.CreateEventViewModel
+import java.util.Calendar
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(navController: NavController) {
-    var title by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+fun CreateEventScreen(
+    navController: NavController,
+    viewModel: CreateEventViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    // State untuk mengontrol pop-up DatePicker Material 3
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+
+    // Setup TimePickerDialog bawaan Android
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hour, minute -> viewModel.updateTime(hour, minute) },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    )
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.imageUrl = uri.toString()
+            println("Log: Foto berhasil dipilih -> $uri")
+        }
+    }
 
     Scaffold(
         containerColor = SoftBlue,
@@ -92,46 +121,90 @@ fun CreateEventScreen(navController: NavController) {
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color.White.copy(alpha = 0.5f))
                     .border(1.dp, PrimaryBlue.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
-                    .clickable { /* Handle Upload */ },
+                    .clickable {
+                        // Membuka galeri sistem HP khusus untuk gambar
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.AddAPhoto,
+                // Jika user sudah memilih gambar, tampilkan preview gambarnya full di dalam Box
+                if (viewModel.imageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = viewModel.imageUrl,
                         contentDescription = null,
-                        tint = PrimaryBlue,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-                    Text("Upload Event Cover", color = DarkBlue, fontWeight = FontWeight.SemiBold)
-                    Text("Recommended: 1200x600px", color = TextGray, fontSize = 12.sp)
+                } else {
+                    // Jika belum milih gambar, tampilkan teks dan ikon bawaan
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto,
+                            contentDescription = null,
+                            tint = PrimaryBlue,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Text("Upload Event Cover", color = DarkBlue, fontWeight = FontWeight.SemiBold)
+                        Text("Recommended: 1200x600px", color = TextGray, fontSize = 12.sp)
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            CustomTextField(label = "Event Title", value = title, onValueChange = { title = it }, placeholder = "What are we doing?")
+            CustomTextField(
+                label = "Event Title",
+                value = viewModel.title,
+                onValueChange = { viewModel.title = it },
+                placeholder = "What are we doing?"
+            )
 
+            // --- BAGIAN DATE & TIME YANG SUDAH PAKAI PICKER ---
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Box(modifier = Modifier.weight(1f)) {
-                    CustomTextField(label = "Date", value = date, onValueChange = { date = it }, placeholder = "mm/dd/yyyy")
+                // Kolom Tanggal
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { showDatePicker = true }
+                ) {
+                    CustomTextField(
+                        label = "Date",
+                        value = viewModel.date,
+                        onValueChange = {},
+                        placeholder = "Select Date",
+                        isClickableOnly = true // Mengunci keyboard mengetik
+                    )
                 }
-                Box(modifier = Modifier.weight(1f)) {
-                    CustomTextField(label = "Time", value = time, onValueChange = { time = it }, placeholder = "-- : --")
+                // Kolom Jam
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { timePickerDialog.show() }
+                ) {
+                    CustomTextField(
+                        label = "Time",
+                        value = viewModel.time,
+                        onValueChange = {},
+                        placeholder = "Select Time",
+                        isClickableOnly = true // Mengunci keyboard mengetik
+                    )
                 }
             }
 
             CustomTextField(
                 label = "Location",
-                value = location,
-                onValueChange = { location = it },
+                value = viewModel.location,
+                onValueChange = { viewModel.location = it },
                 placeholder = "Add a place",
                 leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null, tint = PrimaryBlue) }
             )
 
             CustomTextField(
                 label = "Description",
-                value = description,
-                onValueChange = { description = it },
+                value = viewModel.description,
+                onValueChange = { viewModel.description = it },
                 placeholder = "Tell everyone more about the event...",
                 singleLine = false,
                 modifier = Modifier.height(120.dp)
@@ -144,7 +217,7 @@ fun CreateEventScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
-                    onClick = { /* Draft */ },
+                    onClick = { viewModel.saveToDraft() },
                     modifier = Modifier.weight(1f).height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BCD4)),
                     shape = RoundedCornerShape(16.dp)
@@ -153,7 +226,12 @@ fun CreateEventScreen(navController: NavController) {
                 }
 
                 Button(
-                    onClick = { /* Create */ },
+                    onClick = {
+                        viewModel.createEvent(onSuccess = {
+                            navController.popBackStack()
+                        })
+                    },
+                    enabled = viewModel.title.isNotEmpty(),
                     modifier = Modifier.weight(1.2f).height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                     shape = RoundedCornerShape(16.dp)
@@ -165,6 +243,25 @@ fun CreateEventScreen(navController: NavController) {
                     }
                 }
             }
+
+            // --- DIALOG POP-UP DATE PICKER MATERIAL 3 ---
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let { viewModel.updateDate(it) }
+                            showDatePicker = false
+                        }) { Text("OK") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
             Spacer(modifier = Modifier.height(100.dp))
         }
     }
@@ -179,6 +276,7 @@ fun CustomTextField(
     placeholder: String,
     leadingIcon: @Composable (() -> Unit)? = null,
     singleLine: Boolean = true,
+    isClickableOnly: Boolean = false, // Parameter baru untuk mendeteksi mode picker
     modifier: Modifier = Modifier
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
@@ -187,6 +285,8 @@ fun CustomTextField(
         TextField(
             value = value,
             onValueChange = onValueChange,
+            readOnly = isClickableOnly, // Jika ini true, keyboard gak bakal muncul
+            enabled = !isClickableOnly,  // Menonaktifkan fokus ketikan manual
             modifier = modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.White, RoundedCornerShape(16.dp)),
@@ -199,7 +299,10 @@ fun CustomTextField(
                 disabledContainerColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                disabledIndicatorColor = Color.Transparent,
+                // Supaya warna teksnya tetap hitam pekat/jelas meskipun kita set enabled = false
+                disabledTextColor = LocalContentColor.current,
+                disabledPlaceholderColor = Color.LightGray
             ),
             shape = RoundedCornerShape(16.dp)
         )

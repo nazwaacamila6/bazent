@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.bazent" />
+                  <option name="mobileSdkAppId" value="1:1070613636197:android:f85aa2539ef4336a67928c" />
+                  <option name="projectId" value="bazent-app-3c1f1" />
+                  <option name="projectNumber" value="1070613636197" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

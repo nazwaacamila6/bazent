@@ -8,8 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
@@ -30,29 +28,17 @@ import com.example.bazent.R
 import com.example.bazent.ui.theme.SoftBlue
 import com.example.bazent.ui.theme.LightBlue
 import com.example.bazent.ui.theme.DarkBlue
-import android.widget.Toast
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import com.google.firebase.auth.FirebaseAuth
-import com.example.bazent.data.local.AppDatabase
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bazent.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(navController: NavController) {
-
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginViewModel = viewModel() // Panggil ViewModel di sini
+) {
     val scrollState = rememberScrollState()
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
-    val auth = FirebaseAuth.getInstance()
-
-    val scope = rememberCoroutineScope()
-    val dbRoom = AppDatabase.getDatabase(context)
-    val userDao = dbRoom.userDao()
 
     val gradient = Brush.horizontalGradient(
         colors = listOf(
@@ -66,10 +52,7 @@ fun LoginScreen(navController: NavController) {
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(
-                        SoftBlue,
-                        LightBlue
-                    )
+                    colors = listOf(SoftBlue, LightBlue)
                 )
             )
     ) {
@@ -77,22 +60,16 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .verticalScroll(scrollState), // FIX: Scroll di sini
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(modifier = Modifier.height(50.dp))
 
-            // LOGO
             Image(
                 painter = painterResource(id = R.drawable.logo_bazent),
                 contentDescription = "Logo Bazent",
-                modifier = Modifier
-                    .size(160.dp)
-                    .padding(bottom = 16.dp)
+                modifier = Modifier.size(160.dp).padding(bottom = 16.dp)
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Temukan event gratis, gabung, dan terhubung bersama.",
@@ -106,36 +83,19 @@ fun LoginScreen(navController: NavController) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(30.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                ) {
-                    // USERNAME
-                    Text(
-                        text = "Email",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
+                Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+                    // EMAIL
+                    Text(text = "Email", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(10.dp))
-
                     OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
+                        value = viewModel.email,
+                        onValueChange = { viewModel.email = it },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Enter Email") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email
-                        ),
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, null, tint = MaterialTheme.colorScheme.primary)
-                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         shape = RoundedCornerShape(18.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -146,32 +106,23 @@ fun LoginScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Text(
-                        text = "Password",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
+                    // PASSWORD
+                    Text(text = "Password", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(10.dp))
-
                     OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
+                        value = viewModel.password,
+                        onValueChange = { viewModel.password = it },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Enter password") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.primary)
-                        },
                         trailingIcon = {
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            IconButton(onClick = { viewModel.passwordVisible = !viewModel.passwordVisible }) {
                                 Icon(
-                                    imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    imageVector = if (viewModel.passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                    contentDescription = null
                                 )
                             }
                         },
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        visualTransformation = if (viewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         shape = RoundedCornerShape(18.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -181,82 +132,27 @@ fun LoginScreen(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
+
+                    // BUTTON LOGIN
                     Button(
                         onClick = {
-
-                            if (email.isEmpty() || password.isEmpty()) {
-
-                                Toast.makeText(
-                                    context,
-                                    "All fields must be filled",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                            } else {
-
-                                scope.launch {
-
-                                    auth.signInWithEmailAndPassword(email, password)
-
-                                        .addOnSuccessListener {
-
-                                            Toast.makeText(
-                                                context,
-                                                "Login Success",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-
-                                            navController.navigate("home")
-                                        }
-
-                                        .addOnFailureListener {
-
-                                            scope.launch {
-
-                                                val localUser = userDao.login(email, password)
-
-                                                if (localUser != null) {
-
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Login Offline Success",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-
-                                                    navController.navigate("home")
-
-                                                } else {
-
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Invalid email or password",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            }
-                                        }
-                                }
-                            }
+                            viewModel.onLoginClick { navController.navigate("home") }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(58.dp),
+                        modifier = Modifier.fillMaxWidth().height(58.dp),
                         shape = RoundedCornerShape(30.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues()
+                        contentPadding = PaddingValues(),
+                        enabled = !viewModel.isLoading // Disable button saat loading
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(brush = gradient, shape = RoundedCornerShape(30.dp)),
+                            modifier = Modifier.fillMaxSize().background(brush = gradient, shape = RoundedCornerShape(30.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "Login",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
+                            if (viewModel.isLoading) {
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                            } else {
+                                Text(text = "Login", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            }
                         }
                     }
 
@@ -273,9 +169,7 @@ fun LoginScreen(navController: NavController) {
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.clickable {
-                                navController.navigate("register")
-                            }
+                            modifier = Modifier.clickable { navController.navigate("register") }
                         )
                     }
                 }
