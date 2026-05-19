@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import android.content.Context
 
 class CreateEventViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -67,6 +68,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     // 2. Fungsi untuk handle klik tombol Create dan menyimpannya ke Firestore
+    var isDeviceOnline by mutableStateOf(true)
     fun createEvent(onSuccess: () -> Unit) {
         val currentUserId = auth.currentUser?.uid ?: ""
 
@@ -95,14 +97,26 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
         // Eksekusi penyimpanan data asli ke Firestore
         eventRef.set(newEvent)
             .addOnSuccessListener {
-                isLoading = false
-                println("Log: Berhasil menyimpan data ke Firestore -> ${eventRef.id}")
-                clearFields() // Reset form biar kosong kembali
-                onSuccess()   // Pindah ke halaman beranda lewat Screen
+                println("Log: [Step 1/2] Sukses upload ke Firebase Firestore!")
+
+                viewModelScope.launch {
+                    try {
+                        roomDb.eventDao().insertDraft(newEvent)
+                        println("Log: [Step 2/2] Sukses menduplikat data ke Room Lokal!")
+                        isLoading = false
+                        clearFields()
+                        onSuccess()
+                    } catch (e: Exception) {
+                        isLoading = false
+                        println("Log: Gagal kloning ke lokal Room, tapi data di Firebase aman: ${e.message}")
+                        clearFields()
+                        onSuccess()
+                    }
+                }
             }
             .addOnFailureListener { e ->
                 isLoading = false
-                println("Log: Gagal menyimpan data ke Firestore: ${e.message}")
+                println("Log: Gagal upload ke Firebase: ${e.message}")
             }
     }
 
@@ -156,5 +170,19 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
         imageUrl = ""
         maxParticipants = 0
         selectedCalendar = Calendar.getInstance() // Reset kalender ke waktu sekarang
+    }
+
+    fun checkInternetConnection(){
+        val connectivityManager = getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        if (network == null) {
+            isDeviceOnline = false
+            return
+        }
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        isDeviceOnline = capabilities != null && (
+                capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                )
     }
 }

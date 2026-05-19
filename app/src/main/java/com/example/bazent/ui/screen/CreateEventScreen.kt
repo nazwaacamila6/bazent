@@ -40,6 +40,10 @@ fun CreateEventScreen(
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
+    LaunchedEffect(Unit) {
+        viewModel.checkInternetConnection()
+    }
+
     // State untuk mengontrol pop-up DatePicker Material 3
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -235,15 +239,27 @@ fun CreateEventScreen(
                             navController.popBackStack()
                         })
                     },
-                    enabled = viewModel.title.isNotEmpty(),
+                    // KUNCI: Tombol aktif jika judul terisi DAN HP sedang online
+                    enabled = viewModel.title.isNotEmpty() && viewModel.isDeviceOnline,
                     modifier = Modifier.weight(1.2f).height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlue,
+                        disabledContainerColor = Color.LightGray // Berubah abu-abu kalau offline
+                    ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Create Event", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        // Teks berubah dinamis mengikuti status internet
+                        Text(
+                            text = if (viewModel.isDeviceOnline) "Create Event" else "Offline Mode",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (viewModel.isDeviceOnline) Color.White else Color.Gray
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color.White)
+                        if (viewModel.isDeviceOnline) {
+                            Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color.White)
+                        }
                     }
                 }
             }
