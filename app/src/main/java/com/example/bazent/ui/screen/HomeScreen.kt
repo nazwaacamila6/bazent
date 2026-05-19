@@ -33,7 +33,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Favorite
-import com.example.bazent.data.EventEntity
+import com.example.bazent.data.local.EventEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import android.content.Intent

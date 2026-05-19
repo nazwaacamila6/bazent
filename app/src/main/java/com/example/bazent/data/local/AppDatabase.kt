@@ -4,15 +4,17 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
-    entities = [UserEntity::class],
-    version = 1
+    entities = [UserEntity::class, EventEntity::class], // <--- Sudah sinkron menggunakan EventEntity
+    version = 2
 )
-
+@TypeConverters(TimestampConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun eventDao(): EventDao
 
     companion object {
 
@@ -27,7 +29,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "bazent_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
                 instance

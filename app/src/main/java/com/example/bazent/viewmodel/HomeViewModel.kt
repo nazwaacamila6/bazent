@@ -2,7 +2,7 @@ package com.example.bazent.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.bazent.data.EventEntity
+import com.example.bazent.data.local.EventEntity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 
