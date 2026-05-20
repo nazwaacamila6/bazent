@@ -27,6 +27,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
     var title by mutableStateOf("")
     var date by mutableStateOf("") // Tampilan String di form (cth: 19 May 2026)
     var time by mutableStateOf("") // Tampilan String di form (cth: 10:30)
+    var city by mutableStateOf("")
     var location by mutableStateOf("")
     var description by mutableStateOf("")
 
@@ -80,6 +81,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
             id = eventRef.id, // <--- Memasukkan id otomatis bawaan Firestore tadi ke dalam objek Event
             title = title,
             description = description,
+            city = city,
             location = location,
             userId = currentUserId,
             imageUrl = imageUrl, // Sementara kosong/default
@@ -133,6 +135,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
             id = localDraftId,
             title = title,
             description = description,
+            city = city,
             location = location,
             userId = currentUserId,
             imageUrl = imageUrl,
@@ -166,6 +169,7 @@ class CreateEventViewModel(application: Application) : AndroidViewModel(applicat
         date = ""
         time = ""
         location = ""
+        city =""
         description = ""
         imageUrl = ""
         maxParticipants = 0

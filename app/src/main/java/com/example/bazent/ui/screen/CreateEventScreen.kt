@@ -206,6 +206,13 @@ fun CreateEventScreen(
             )
 
             CustomTextField(
+                label = "City",
+                value = viewModel.city,
+                onValueChange = { viewModel.city = it },
+                placeholder = "Example : Madiun"
+            )
+
+            CustomTextField(
                 label = "Description",
                 value = viewModel.description,
                 onValueChange = { viewModel.description = it },

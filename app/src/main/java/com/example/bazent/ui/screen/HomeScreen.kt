@@ -37,8 +37,14 @@ import com.example.bazent.data.local.EventEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import android.content.Intent
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.BorderStroke
 
 
 @Composable
@@ -140,6 +146,96 @@ fun HomeScreen(
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
+
+                    var expanded by remember { mutableStateOf(false) }
+
+                    Box {
+
+                        OutlinedButton(
+                            onClick = {
+                                expanded = true
+                            },
+
+                            shape = RoundedCornerShape(18.dp),
+
+                            border = BorderStroke(
+                                1.dp,
+                                PrimaryBlue.copy(alpha = 0.2f)
+                            ),
+
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color.White
+                            ),
+
+                            contentPadding = PaddingValues(
+                                horizontal = 18.dp,
+                                vertical = 12.dp
+                            )
+                        ) {
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                Text(
+                                    text =
+                                        if (homeViewModel.selectedCity.isEmpty())
+                                            "All Cities"
+                                        else
+                                            homeViewModel.selectedCity,
+
+                                    color = DarkBlue,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = "▼",
+                                    color = PrimaryBlue
+                                )
+                            }
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = {
+                                expanded = false
+                            },
+
+                            modifier = Modifier
+                                .background(
+                                    Color.White,
+                                    RoundedCornerShape(18.dp)
+                                )
+                        ) {
+
+                            homeViewModel.cities.forEach { city ->
+
+                                DropdownMenuItem(
+
+                                    text = {
+                                        Text(
+                                            text = city,
+                                            color = DarkBlue,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    },
+
+                                    onClick = {
+
+                                        if (city == "All") {
+                                            homeViewModel.filterByCity("")
+                                        } else {
+                                            homeViewModel.filterByCity(city)
+                                        }
+
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
