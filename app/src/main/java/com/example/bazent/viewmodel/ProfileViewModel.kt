@@ -6,8 +6,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.bazent.data.local.AppDatabase
+import kotlinx.coroutines.launch
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(application: Application)
+    : AndroidViewModel(application)  {
 
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
@@ -28,6 +34,8 @@ class ProfileViewModel : ViewModel() {
 
     private val _error = MutableStateFlow("")
     val error : StateFlow<String> = _error
+
+    private val roomDb = AppDatabase.getDatabase(application)
 
     init {
         loadUserData()
@@ -73,6 +81,22 @@ class ProfileViewModel : ViewModel() {
                 _error.value =
                     exception.message ?: "Failed to load events"
             }
+
+        viewModelScope.launch {
+
+            try {
+
+                val drafts =
+                    roomDb.eventDao().getAllDrafts(uid)
+
+                _draftEvents.value = drafts
+
+            } catch (e: Exception) {
+
+                _error.value =
+                    e.message ?: "Failed to load drafts"
+            }
+        }
     }
 
     fun logout() {
