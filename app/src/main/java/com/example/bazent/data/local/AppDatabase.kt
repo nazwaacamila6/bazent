@@ -7,8 +7,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [UserEntity::class, EventEntity::class], // <--- Sudah sinkron menggunakan EventEntity
-    version = 2
+    entities = [UserEntity::class, EventEntity::class],
+    version = 4,
+    exportSchema = false
 )
 @TypeConverters(TimestampConverter::class,
     Converters::class)

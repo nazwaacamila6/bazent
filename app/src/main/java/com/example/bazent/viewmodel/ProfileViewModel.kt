@@ -71,11 +71,6 @@ class ProfileViewModel(application: Application)
                 _sharedEvents.value = allEvents.filter {
                     it.status == "shared"
                 }
-
-                _draftEvents.value = allEvents.filter {
-                    it.status == "draft"
-
-                }
             }
             .addOnFailureListener { exception ->
                 _error.value =

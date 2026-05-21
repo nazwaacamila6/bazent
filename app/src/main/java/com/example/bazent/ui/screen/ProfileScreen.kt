@@ -33,6 +33,7 @@ import com.example.bazent.ui.theme.TextGray
 import com.example.bazent.viewmodel.ProfileViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
+import coil.compose.AsyncImage
 
 @Composable
 fun ProfileScreen(
@@ -295,15 +296,18 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        Image(
-                            painter = painterResource(id = R.drawable.placeholder),
+                        AsyncImage(
+                            model = event.imageUrl,
                             contentDescription = event.title,
 
                             modifier = Modifier
                                 .size(90.dp)
                                 .clip(RoundedCornerShape(20.dp)),
 
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
+
+                            error = painterResource(id = R.drawable.placeholder),
+                            placeholder = painterResource(id = R.drawable.placeholder)
                         )
 
                         Spacer(modifier = Modifier.width(16.dp))
